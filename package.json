@@ -1,28 +1,28 @@
 {
-    "name": "parakeet",
-    "version": "0.0.1",
-    "scripts": {
-        "build:server": "tsc --project ./tsconfig.server.json",
-        "build:client": "tsc --project ./tsconfig.client.json",
-        "build": "npm run-script build:server && npm run-script build:client",
-        "start": "cd bin/server/build && node main_server.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/mushroom-labs/parakeet.git"
-    },
-    "author": "Mushroom Labs",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/mushroom-labs/parakeet/issues"
-    },
-    "homepage": "https://github.com/mushroom-labs/parakeet#readme",
-    "dependencies": {
-        "@types/express": "^4.0.36",
-        "@types/node": "^8.0.22",
-        "@types/ws": "^3.0.2",
-        "express": "^4.15.4",
-        "typescript": "^2.4.2",
-        "ws": "^3.1.0"
-    }
+  "name": "parakeet",
+  "version": "0.0.1",
+  "scripts": {
+    "build:server": "tsc --project ./tsconfig.server.json",
+    "build:client": "tsc --project ./tsconfig.client.json",
+    "build": "npm run-script build:server && npm run-script build:client",
+    "start": "cd bin/server/build && node main_server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mushroom-labs/parakeet.git"
+  },
+  "author": "Mushroom Labs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mushroom-labs/parakeet/issues"
+  },
+  "homepage": "https://github.com/mushroom-labs/parakeet#readme",
+  "dependencies": {
+    "@types/express": "^4.0.36",
+    "@types/node": "^8.0.22",
+    "@types/ws": "^3.0.2",
+    "express": "^4.15.4",
+    "typescript": "^2.4.2",
+    "ws": "^3.1.0"
+  }
 }

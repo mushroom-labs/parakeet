@@ -4,6 +4,10 @@ import * as WebSocket from "ws";
 import * as path from "path";
 import {GameServer} from "./server/GameServer";
 
+import * as Box2D from "../lib/box2dweb";
+const vec: Box2D.Common.Math.b2Vec2 = new Box2D.Common.Math.b2Vec2(1, 1);
+console.log(vec);
+
 const app = express();
 const binDir = path.join(__dirname, "../../");
 const clientAppPath = path.join(binDir, "./client");
