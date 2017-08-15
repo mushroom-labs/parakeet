@@ -1,0 +1,10 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "module": "amd",
+        "outFile": "./bin/client/build/bundle.js"
+    },
+    "files": [
+        "./src/main_client.ts"
+    ]
+}
