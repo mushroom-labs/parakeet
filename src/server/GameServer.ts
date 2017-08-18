@@ -36,7 +36,6 @@ export namespace GameServer {
             clientMessageTransport.logInfoMessageEvent().addListener((data) => { console.info(data) });
             clientMessageTransport.logWarnMessageEvent().addListener((data) => { console.warn(data) });
             clientMessageTransport.logErrorMessageEvent().addListener((data) => { console.error(data) });
-            console.log("client connected");
 
             // === process client messages ===
             //TODO

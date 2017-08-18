@@ -2,7 +2,6 @@ import {MessageDataType} from "../Message";
 import LogInfoData = MessageDataType.LogInfoData;
 import LogWarnData = MessageDataType.LogWarnData;
 import LogErrorData = MessageDataType.LogErrorData;
-import ClientInitData = MessageDataType.ClientInitData;
 import {EventDispatcher} from "../../EventDispatcher";
 
 export interface IMessageTransport {
@@ -14,9 +13,6 @@ export interface IMessageTransport {
 
     sendLogErrorMessage(data: LogErrorData);
     logErrorMessageEvent(): EventDispatcher<LogErrorData>;
-
-    sendClientInitMessage(data: ClientInitData);
-    clientInitMessageEvent(): EventDispatcher<ClientInitData>;
 }
 
 export interface IClientMessageTransport  extends IMessageTransport {

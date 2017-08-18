@@ -5,7 +5,8 @@
     "build:server": "tsc --project ./tsconfig.server.json",
     "build:client": "tsc --project ./tsconfig.client.json",
     "build": "npm run-script build:server && npm run-script build:client",
-    "start": "cd bin/server/build && node main_server.js"
+    "start": "cd bin/server/build && node main_server.js",
+    "live:client": "nodemon --delay 3 --exec \"tsc --project ./tsconfig.client.json\""
   },
   "repository": {
     "type": "git",
@@ -24,5 +25,9 @@
     "express": "^4.15.4",
     "typescript": "^2.4.2",
     "ws": "^3.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0",
+    "ts-node": "^3.3.0"
   }
 }
