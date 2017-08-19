@@ -3,6 +3,7 @@ import {AbstractMessageTransport} from "./AbstractMessageTransport";
 import {IClientMessageTransport} from "./IMessageTransport";
 import {EventDispatcher} from "../../EventDispatcher";
 import ServerConnectionData = MessageDataType.ServerConnectionData;
+import LiveUpdateData = MessageDataType.LiveUpdateData;
 
 export class ClientSocketTransport extends AbstractMessageTransport implements IClientMessageTransport {
     private _connectionOpenEvent = new EventDispatcher<null>();
@@ -50,7 +51,18 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
     protected _processMessage(message: Message) {
         switch (message.type) {
             case MessageType.SERVER_CONNECTION_DATA:
-                this._connectionDataEvent.dispatch(message.data as MessageDataType.ServerConnectionData);
+                this._connectionDataEvent.dispatch(message.data as ServerConnectionData);
+                break;
+            case MessageType.LIVE_UPDATE_DATA:
+                //TODO: dispatch event
+                {
+                    const data = message.data as LiveUpdateData;
+                    console.group(`LiveUpdate ${data.deltaTime}ms`);
+                    for (const actorUid of Object.keys(data.actors)) {
+                        console.log(`[${actorUid}]: (${data.actors[actorUid].x},${data.actors[actorUid].y})`);
+                    }
+                    console.groupEnd();
+                }
                 break;
             default:
                 super._processMessage(message);

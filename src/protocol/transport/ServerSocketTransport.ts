@@ -3,6 +3,9 @@ import {AbstractMessageTransport} from "./AbstractMessageTransport";
 import {MessageDataType, Message, MessageType} from "../Message";
 import {IServerClientMessageTransport, IServerMessageTransport} from "./IMessageTransport";
 import {EventDispatcher} from "../../EventDispatcher";
+import ClientConnectionData = MessageDataType.ClientConnectionData;
+import ServerConnectionData = MessageDataType.ServerConnectionData;
+import LiveUpdateData = MessageDataType.LiveUpdateData;
 
 export class ServerSocketTransport extends AbstractMessageTransport implements IServerMessageTransport {
     private _clientConnectionOpenEvent = new EventDispatcher<IServerClientMessageTransport>();
@@ -21,6 +24,10 @@ export class ServerSocketTransport extends AbstractMessageTransport implements I
         return this._clientConnectionOpenEvent;
     }
 
+    sendLiveUpdateData(data: LiveUpdateData) {
+        this._sendMessage(this._createMessage(MessageType.LIVE_UPDATE_DATA, data));
+    }
+
     shutdown() {
         this._socketServer.close();
     }
@@ -36,6 +43,7 @@ export class ServerSocketTransport extends AbstractMessageTransport implements I
 
 class ServerClientSocketTransport extends AbstractMessageTransport implements IServerClientMessageTransport {
     private _socket: WebSocket;
+    private _connectionDataEvent = new EventDispatcher<ClientConnectionData>();
 
     constructor(socket: WebSocket) {
         super();
@@ -46,26 +54,29 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
         })
     }
 
-    protected _processMessage(message: Message) {
-        switch (message.type) {
-            case MessageType.CLIENT_CONNECTION_DATA:
-                this._processConnectionData(message.data as MessageDataType.ClientConnectionData);
-                break;
-            default:
-                super._processMessage(message);
-        }
+    connectionDataEvent(): EventDispatcher<ClientConnectionData> {
+        return this._connectionDataEvent;
+    }
+
+    sendConnectionData(data: ServerConnectionData) {
+        this._sendMessage(this._createMessage(MessageType.SERVER_CONNECTION_DATA, data));
     }
 
     close() {
         this._socket.close();
     }
 
-    protected _sendMessage(message: Message) {
-        this._socket.send(JSON.stringify(message));
+    protected _processMessage(message: Message) {
+        switch (message.type) {
+            case MessageType.CLIENT_CONNECTION_DATA:
+                this._connectionDataEvent.dispatch(message.data as ClientConnectionData);
+                break;
+            default:
+                super._processMessage(message);
+        }
     }
 
-    private _processConnectionData(data: MessageDataType.ClientConnectionData) {
-        console.log(data.name + " connected");
-        this._sendMessage(this._createMessage(MessageType.SERVER_CONNECTION_DATA, {id: "322"}));
+    protected _sendMessage(message: Message) {
+        this._socket.send(JSON.stringify(message));
     }
 }

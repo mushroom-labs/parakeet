@@ -6,6 +6,7 @@ export enum MessageType {
 
     // Server
     SERVER_CONNECTION_DATA,
+    LIVE_UPDATE_DATA,
 
     // Client
     CLIENT_CONNECTION_DATA,
@@ -25,5 +26,13 @@ export namespace MessageDataType {
     }
     export type ClientConnectionData = {
         name: string,
+    }
+    type ActorData =  {
+        x: number,
+        y: number,
+    }
+    export type LiveUpdateData = {
+        deltaTime: number;
+        actors: { [uid: string]: ActorData };
     }
 }
