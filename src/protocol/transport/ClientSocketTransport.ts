@@ -1,11 +1,13 @@
-import {Message} from "../Message";
+import {MessageDataType, Message, MessageType} from "../Message";
 import {AbstractMessageTransport} from "./AbstractMessageTransport";
 import {IClientMessageTransport} from "./IMessageTransport";
 import {EventDispatcher} from "../../EventDispatcher";
+import ServerConnectionData = MessageDataType.ServerConnectionData;
 
 export class ClientSocketTransport extends AbstractMessageTransport implements IClientMessageTransport {
     private _connectionOpenEvent = new EventDispatcher<null>();
     private _connectionCloseEvent = new EventDispatcher<null>();
+    private _connectionDataEvent = new EventDispatcher<ServerConnectionData>();
     private _socket: WebSocket;
 
     constructor(socket: WebSocket) {
@@ -33,8 +35,26 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
         return this._connectionCloseEvent;
     }
 
+    connectionDataEvent(): EventDispatcher<ServerConnectionData> {
+        return this._connectionDataEvent;
+    }
+
     close() {
         this._socket.close();
+    }
+
+    sendConnectionData(name: string) {
+        this._sendMessage(this._createMessage(MessageType.CLIENT_CONNECTION_DATA, {name}));
+    }
+
+    protected _processMessage(message: Message) {
+        switch (message.type) {
+            case MessageType.SERVER_CONNECTION_DATA:
+                this._connectionDataEvent.dispatch(message.data as MessageDataType.ServerConnectionData);
+                break;
+            default:
+                super._processMessage(message);
+        }
     }
 
     protected _sendMessage(message: Message) {

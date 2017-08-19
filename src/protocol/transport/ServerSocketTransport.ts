@@ -1,6 +1,6 @@
 import * as WebSocket from "ws";
 import {AbstractMessageTransport} from "./AbstractMessageTransport";
-import {Message} from "../Message";
+import {MessageDataType, Message, MessageType} from "../Message";
 import {IServerClientMessageTransport, IServerMessageTransport} from "./IMessageTransport";
 import {EventDispatcher} from "../../EventDispatcher";
 
@@ -46,11 +46,26 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
         })
     }
 
+    protected _processMessage(message: Message) {
+        switch (message.type) {
+            case MessageType.CLIENT_CONNECTION_DATA:
+                this._processConnectionData(message.data as MessageDataType.ClientConnectionData);
+                break;
+            default:
+                super._processMessage(message);
+        }
+    }
+
     close() {
         this._socket.close();
     }
 
     protected _sendMessage(message: Message) {
         this._socket.send(JSON.stringify(message));
+    }
+
+    private _processConnectionData(data: MessageDataType.ClientConnectionData) {
+        console.log(data.name + " connected");
+        this._sendMessage(this._createMessage(MessageType.SERVER_CONNECTION_DATA, {id: "322"}));
     }
 }

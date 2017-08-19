@@ -1,5 +1,9 @@
-import {GameClient} from "./client/GameClient";
-import {ClientSocketTransport} from "./protocol/transport/ClientSocketTransport";
+import {Window} from "./client/Window";
+import {Engine} from "./client/engine/Engine"
+import {Connector} from "./client/Connector";
 
-const socket: WebSocket = new WebSocket("ws://" + window.location.host);
-GameClient.initGame(new ClientSocketTransport(socket));
+const connector = new Connector();
+const window = new Window(document.body);
+
+const engine = new Engine(window, connector);
+engine.run();
