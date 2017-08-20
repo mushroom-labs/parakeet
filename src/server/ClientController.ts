@@ -28,7 +28,15 @@ export class ClientController {
 
             // === process client messages ===
             //TODO
-        })
+        });
+
+        messageTransport.moveActionDataEvent().addListener((data) => {
+            console.log(this._actor.name(), "move", data);
+        });
+
+        messageTransport.mouseActionDataEvent().addListener((data) => {
+            console.log(this._actor.name(), "mouse", data);
+        });
     }
 
     sendLiveUpdateData(deltaTime: number) {

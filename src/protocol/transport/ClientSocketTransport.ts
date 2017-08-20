@@ -5,6 +5,8 @@ import {EventDispatcher} from "../../EventDispatcher";
 import ClientConnectionData = MessageDataType.ClientConnectionData;
 import ServerConnectionData = MessageDataType.ServerConnectionData;
 import LiveUpdateData = MessageDataType.LiveUpdateData;
+import MoveActionData = MessageDataType.MoveActionData;
+import MouseActionData = MessageDataType.MouseActionData;
 
 export class ClientSocketTransport extends AbstractMessageTransport implements IClientMessageTransport {
     private _connectionOpenEvent = new EventDispatcher<null>();
@@ -52,6 +54,14 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
 
     sendConnectionData(data: ClientConnectionData) {
         this._sendMessage(this._createMessage(MessageType.CLIENT_CONNECTION_DATA, data));
+    }
+
+    sendMoveAction(data: MoveActionData) {
+        this._sendMessage(this._createMessage(MessageType.MOVE_ACTION_DATA, data));
+    }
+
+    sendMouseAction(data: MouseActionData) {
+        this._sendMessage(this._createMessage(MessageType.MOUSE_ACTION_DATA, data));
     }
 
     protected _processMessage(message: Message) {

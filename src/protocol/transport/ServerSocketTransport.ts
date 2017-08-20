@@ -6,6 +6,8 @@ import {EventDispatcher} from "../../EventDispatcher";
 import ClientConnectionData = MessageDataType.ClientConnectionData;
 import ServerConnectionData = MessageDataType.ServerConnectionData;
 import LiveUpdateData = MessageDataType.LiveUpdateData;
+import MoveActionData = MessageDataType.MoveActionData;
+import MouseActionData = MessageDataType.MouseActionData;
 
 export class ServerSocketTransport extends AbstractMessageTransport implements IServerMessageTransport {
     private _clientConnectionOpenEvent = new EventDispatcher<IServerClientMessageTransport>();
@@ -40,6 +42,8 @@ export class ServerSocketTransport extends AbstractMessageTransport implements I
 class ServerClientSocketTransport extends AbstractMessageTransport implements IServerClientMessageTransport {
     private _socket: WebSocket;
     private _connectionDataEvent = new EventDispatcher<ClientConnectionData>();
+    private _moveActionDataEvent = new EventDispatcher<MoveActionData>();
+    private _mouseActionDataEvent = new EventDispatcher<MouseActionData>();
 
     constructor(socket: WebSocket) {
         super();
@@ -52,6 +56,14 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
 
     connectionDataEvent(): EventDispatcher<ClientConnectionData> {
         return this._connectionDataEvent;
+    }
+
+    moveActionDataEvent(): EventDispatcher<MoveActionData> {
+        return this._moveActionDataEvent;
+    }
+
+    mouseActionDataEvent(): EventDispatcher<MouseActionData> {
+        return this._mouseActionDataEvent;
     }
 
     sendConnectionData(data: ServerConnectionData) {
@@ -71,6 +83,11 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
             case MessageType.CLIENT_CONNECTION_DATA:
                 this._connectionDataEvent.dispatch(message.data as ClientConnectionData);
                 break;
+            case MessageType.MOVE_ACTION_DATA:
+                this._moveActionDataEvent.dispatch(message.data as MoveActionData);
+                break;
+            case MessageType.MOUSE_ACTION_DATA:
+                this._mouseActionDataEvent.dispatch(message.data as MouseActionData);
             default:
                 super._processMessage(message);
         }

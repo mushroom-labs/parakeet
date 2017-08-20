@@ -6,6 +6,8 @@ import {EventDispatcher} from "../../EventDispatcher";
 import ClientConnectionData = MessageDataType.ClientConnectionData;
 import ServerConnectionData = MessageDataType.ServerConnectionData;
 import LiveUpdateData = MessageDataType.LiveUpdateData;
+import MoveActionData = MessageDataType.MoveActionData;
+import MouseActionData = MessageDataType.MouseActionData;
 
 export interface IMessageTransport {
     sendLogInfoMessage(data: LogInfoData);
@@ -24,6 +26,8 @@ export interface IClientMessageTransport  extends IMessageTransport {
     connectionDataEvent(): EventDispatcher<ServerConnectionData>;
     liveUpdateDataEvent(): EventDispatcher<LiveUpdateData>;
     sendConnectionData(data: ClientConnectionData);
+    sendMoveAction(data: MoveActionData);
+    sendMouseAction(data: MouseActionData);
     close();
 }
 
@@ -36,5 +40,7 @@ export interface IServerClientMessageTransport  extends IMessageTransport {
     sendConnectionData(data: ServerConnectionData);
     sendLiveUpdateData(data: LiveUpdateData);
     connectionDataEvent(): EventDispatcher<ClientConnectionData>;
+    moveActionDataEvent(): EventDispatcher<MoveActionData>;
+    mouseActionDataEvent(): EventDispatcher<MouseActionData>;
     close();
 }

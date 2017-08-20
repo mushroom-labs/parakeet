@@ -1,3 +1,5 @@
+import {MoveDirection} from "../client/engine/MoveDirection";
+
 export enum MessageType {
     // Common
     LOG_INFO,
@@ -10,6 +12,8 @@ export enum MessageType {
 
     // Client
     CLIENT_CONNECTION_DATA,
+    MOVE_ACTION_DATA,
+    MOUSE_ACTION_DATA,
 }
 
 export type Message = {
@@ -34,6 +38,14 @@ export namespace MessageDataType {
     type PlayerData = ActorData & {
         //TODO: addition player data
     }
+    export type MoveActionData = {
+        direction: MoveDirection,
+        isPressed: boolean,
+    };
+    export type MouseActionData = {
+        x: number,
+        y: number,
+    };
     export type LiveUpdateData = {
         deltaTime: number;
         player: ActorData,

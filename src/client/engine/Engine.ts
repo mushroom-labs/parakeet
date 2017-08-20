@@ -1,5 +1,4 @@
 import {Window} from "../Window";
-import {IClientMessageTransport} from "../../protocol/transport/IMessageTransport";
 
 import {LoadingScene} from "../scene/LoadingScene";
 import {GameScene} from "../scene/GameScene";
@@ -7,8 +6,6 @@ import {IScene} from "../scene/IScene";
 import {Connector} from "../Connector";
 import {MessageDataType} from "../../protocol/Message";
 import ServerConnectionData = MessageDataType.ServerConnectionData;
-
-const WEB_SOCKET_URL = "ws://" + window.location.host;
 
 export class Engine {
     private _window: Window;
@@ -31,7 +28,7 @@ export class Engine {
     private _connectionEstablishedHandler() {
         const protocol = this._connector.protocol();
         protocol.connectionDataEvent().addListener((connectionData: ServerConnectionData) => {
-            const gameScene = new GameScene(connectionData, protocol);
+            const gameScene = new GameScene(connectionData, protocol, this._window.container());
             this._changeScene(gameScene);
         })
     }
