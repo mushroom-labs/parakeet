@@ -29,12 +29,12 @@ export interface IClientMessageTransport  extends IMessageTransport {
 
 export interface IServerMessageTransport  extends IMessageTransport {
     clientConnectionOpenEvent(): EventDispatcher<IServerClientMessageTransport>;
-    sendLiveUpdateData(data: LiveUpdateData);
     shutdown();
 }
 
 export interface IServerClientMessageTransport  extends IMessageTransport {
     sendConnectionData(data: ServerConnectionData);
+    sendLiveUpdateData(data: LiveUpdateData);
     connectionDataEvent(): EventDispatcher<ClientConnectionData>;
     close();
 }

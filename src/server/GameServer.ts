@@ -1,22 +1,10 @@
 import {IServerMessageTransport, IServerClientMessageTransport} from "../protocol/transport/IMessageTransport";
 import {World} from "./model/World";
 import {ClientController} from "./ClientController";
-import {MessageDataType} from "../protocol/Message";
 
 export namespace GameServer {
-    import LiveUpdateData = MessageDataType.LiveUpdateData;
 
-    function collectLiveUpdateData(deltaTime: number, world: World): LiveUpdateData {
-        const actorsData = world.actors().itemUids().reduce((result, uid) => {
-            result[uid] = { x: 0, y: 0 }; //TODO: add real position
-            return result;
-        }, {});
-        return {
-            deltaTime: deltaTime,
-            actors: actorsData,
-        }
-    }
-    function startGameServer(serverMessageTransport: IServerMessageTransport, world: World) {
+    function startGameServer(serverMessageTransport: IServerMessageTransport, clientControllers: ClientController[], world: World) {
         const SERVER_FREQUENCY = 1; //hz
         const LOOP_ITERATION_DELAY = 1000 / SERVER_FREQUENCY; //ms;
         let lastTimestamp = Date.now();
@@ -30,7 +18,9 @@ export namespace GameServer {
             //TODO
 
             // === send update data ===
-            serverMessageTransport.sendLiveUpdateData(collectLiveUpdateData(deltaTime, world));
+            for (const clientController of clientControllers) {
+                clientController.sendLiveUpdateData(deltaTime);
+            }
 
             // === call new loop iteration ===
             const finalDeltaTime = Date.now() - lastTimestamp;
@@ -46,8 +36,9 @@ export namespace GameServer {
     }
 
     export function initGameServer(serverMessageTransport: IServerMessageTransport) {
+        const clientControllers: ClientController[] = [];
         const world = createWorld();
-        startGameServer(serverMessageTransport, world);
+        startGameServer(serverMessageTransport, clientControllers, world);
 
         serverMessageTransport.logInfoMessageEvent().addListener((data) => { console.info(data) });
         serverMessageTransport.logWarnMessageEvent().addListener((data) => { console.warn(data) });
@@ -55,6 +46,7 @@ export namespace GameServer {
 
         serverMessageTransport.clientConnectionOpenEvent().addListener((clientMessageTransport: IServerClientMessageTransport) => {
             const clientController = new ClientController(clientMessageTransport, world);
+            clientControllers.push(clientController);
         });
     }
 }

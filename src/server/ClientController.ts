@@ -2,10 +2,12 @@ import {IServerClientMessageTransport} from "../protocol/transport/IMessageTrans
 import {World} from "./model/World";
 import {MessageDataType} from "../protocol/Message";
 import ClientConnectionData = MessageDataType.ClientConnectionData;
+import {Actor} from "./model/Actor";
 
 export class ClientController {
     private _messageTransport: IServerClientMessageTransport;
     private _world: World;
+    private _actor: Actor;
 
     constructor(messageTransport: IServerClientMessageTransport, world: World) {
         this._messageTransport = messageTransport;
@@ -17,15 +19,38 @@ export class ClientController {
         messageTransport.logWarnMessageEvent().addListener((data) => { console.warn(data) });
         messageTransport.logErrorMessageEvent().addListener((data) => { console.error(data) });
 
-        const actor = world.createActor();
+        this._actor = world.createActor();
         messageTransport.connectionDataEvent().addListener((data: ClientConnectionData) => {
-            actor.setName(data.name);
+            this._actor.setName(data.name);
             messageTransport.sendConnectionData({
-                id: actor.uid(),
+                id: this._actor.uid(),
             })
 
             // === process client messages ===
             //TODO
+        })
+    }
+
+    sendLiveUpdateData(deltaTime: number) {
+        const playerData = {
+            x: 0,
+            y: 0,
+        };
+
+        const actorsData = {};
+        this._world.actors().forEach((actor: Actor, uid: string) => {
+            if (uid != this._actor.uid()) {
+                actorsData[uid] = {
+                    x: 0,
+                    y: 0,
+                }
+            }
+        });
+
+        this._messageTransport.sendLiveUpdateData({
+            deltaTime: deltaTime,
+            player: playerData,
+            actors: actorsData,
         })
     }
 }
