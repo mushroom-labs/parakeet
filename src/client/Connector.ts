@@ -1,8 +1,9 @@
 
 import {ClientSocketTransport} from "../protocol/transport/ClientSocketTransport";
+import {IClientMessageTransport} from "../protocol/transport/IMessageTransport";
 
 export class Connector {
-    private _protocol: ClientSocketTransport;
+    private _protocol: IClientMessageTransport;
 
     constructor() {
         this._protocol = null;
@@ -13,7 +14,7 @@ export class Connector {
         this._protocol = new ClientSocketTransport(socket);
     }
 
-    protocol(): ClientSocketTransport {
+    protocol(): IClientMessageTransport {
         return this._protocol;
     }
 }

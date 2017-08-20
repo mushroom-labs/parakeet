@@ -21,6 +21,8 @@ export interface IMessageTransport {
 export interface IClientMessageTransport  extends IMessageTransport {
     connectionOpenEvent(): EventDispatcher<null>;
     connectionCloseEvent(): EventDispatcher<null>;
+    connectionDataEvent(): EventDispatcher<ServerConnectionData>;
+    sendConnectionData(data: ClientConnectionData);
     close();
 }
 

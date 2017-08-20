@@ -2,6 +2,7 @@ import {MessageDataType, Message, MessageType} from "../Message";
 import {AbstractMessageTransport} from "./AbstractMessageTransport";
 import {IClientMessageTransport} from "./IMessageTransport";
 import {EventDispatcher} from "../../EventDispatcher";
+import ClientConnectionData = MessageDataType.ClientConnectionData;
 import ServerConnectionData = MessageDataType.ServerConnectionData;
 import LiveUpdateData = MessageDataType.LiveUpdateData;
 
@@ -44,8 +45,8 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
         this._socket.close();
     }
 
-    sendConnectionData(name: string) {
-        this._sendMessage(this._createMessage(MessageType.CLIENT_CONNECTION_DATA, {name}));
+    sendConnectionData(data: ClientConnectionData) {
+        this._sendMessage(this._createMessage(MessageType.CLIENT_CONNECTION_DATA, data));
     }
 
     protected _processMessage(message: Message) {

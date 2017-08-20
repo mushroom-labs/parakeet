@@ -101,6 +101,8 @@ export class LoadingScene implements IScene {
     private _connectedHandler(name: string) {
         this._connectionEstablishedEvent.dispatch(null);
         this._setProgress(0.5);
-        this._connector.protocol().sendConnectionData(name);
+        this._connector.protocol().sendConnectionData({
+            name: name
+        });
     }
 }
