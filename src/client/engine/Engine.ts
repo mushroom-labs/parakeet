@@ -28,7 +28,7 @@ export class Engine {
     private _connectionEstablishedHandler() {
         const protocol = this._connector.protocol();
         protocol.connectionDataEvent().addListener((connectionData: ServerConnectionData) => {
-            const gameScene = new GameScene(connectionData, protocol, this._window.container());
+            const gameScene = new GameScene(connectionData, protocol, this._window);
             this._changeScene(gameScene);
         })
     }

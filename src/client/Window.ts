@@ -1,5 +1,3 @@
-import {Painter} from "engine/Painter";
-import {Actor} from "engine/Actor"
 
 export class Window {
     private _container: HTMLElement;

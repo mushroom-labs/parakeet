@@ -1,6 +1,6 @@
 import {Vec2} from "engine/graphic/Vec2"
 
-export class Actor {
+export class Player {
     private _position: Vec2;
 
     constructor() {
@@ -9,5 +9,9 @@ export class Actor {
 
     position(): Vec2 {
         return this._position;
+    }
+
+    setPosition(position: Vec2) {
+        this._position = position;
     }
 }
