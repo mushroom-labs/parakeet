@@ -10,6 +10,7 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
     private _connectionOpenEvent = new EventDispatcher<null>();
     private _connectionCloseEvent = new EventDispatcher<null>();
     private _connectionDataEvent = new EventDispatcher<ServerConnectionData>();
+    private _liveUpdateDataEvent = new EventDispatcher<LiveUpdateData>();
     private _socket: WebSocket;
 
     constructor(socket: WebSocket) {
@@ -41,6 +42,10 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
         return this._connectionDataEvent;
     }
 
+    liveUpdateDataEvent(): EventDispatcher<LiveUpdateData> {
+        return this._liveUpdateDataEvent;
+    }
+
     close() {
         this._socket.close();
     }
@@ -55,15 +60,7 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
                 this._connectionDataEvent.dispatch(message.data as ServerConnectionData);
                 break;
             case MessageType.LIVE_UPDATE_DATA:
-                //TODO: dispatch event
-                {
-                    const data = message.data as LiveUpdateData;
-                    console.group(`LiveUpdate ${data.deltaTime}ms`);
-                    for (const actorUid of Object.keys(data.actors)) {
-                        console.log(`[${actorUid}]: (${data.actors[actorUid].x},${data.actors[actorUid].y})`);
-                    }
-                    console.groupEnd();
-                }
+                this._liveUpdateDataEvent.dispatch(message.data as LiveUpdateData);
                 break;
             default:
                 super._processMessage(message);
