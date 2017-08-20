@@ -5,7 +5,7 @@ import {ClientController} from "./ClientController";
 export namespace GameServer {
 
     function startGameServer(serverMessageTransport: IServerMessageTransport, clientControllers: ClientController[], world: World) {
-        const SERVER_FREQUENCY = 1; //hz
+        const SERVER_FREQUENCY = 60; //hz
         const LOOP_ITERATION_DELAY = 1000 / SERVER_FREQUENCY; //ms;
         let lastTimestamp = Date.now();
         const serverLoop = () => {
@@ -15,7 +15,10 @@ export namespace GameServer {
             lastTimestamp = currentTimestamp;
 
             // === server game logic ===
-            //TODO
+            for (const clientController of clientControllers) {
+                clientController.update();
+            }
+            world.update(deltaTime);
 
             // === send update data ===
             for (const clientController of clientControllers) {
