@@ -2,6 +2,7 @@ export interface IImmutableMapCollection<T> {
     itemUids(): string[];
     getItem(uid: string): T;
     items(): T[];
+    forEach(cb: (item: T, uid: string) => void);
 }
 
 export interface IMapCollection<T> extends IImmutableMapCollection<T> {
@@ -25,5 +26,11 @@ export class MapCollection<T> implements IMapCollection<T> {
 
     items(): T[] {
         return Array.from(this._items.values());
+    }
+
+    forEach(cb: (item: T, uid: string) => void) {
+        this._items.forEach((item: T, uid: string) => {
+            cb(item, uid);
+        })
     }
 }

@@ -31,8 +31,12 @@ export namespace MessageDataType {
         x: number,
         y: number,
     }
+    type PlayerData = ActorData & {
+        //TODO: addition player data
+    }
     export type LiveUpdateData = {
         deltaTime: number;
+        player: ActorData,
         actors: { [uid: string]: ActorData };
     }
 }

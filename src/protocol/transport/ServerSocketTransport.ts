@@ -24,10 +24,6 @@ export class ServerSocketTransport extends AbstractMessageTransport implements I
         return this._clientConnectionOpenEvent;
     }
 
-    sendLiveUpdateData(data: LiveUpdateData) {
-        this._sendMessage(this._createMessage(MessageType.LIVE_UPDATE_DATA, data));
-    }
-
     shutdown() {
         this._socketServer.close();
     }
@@ -60,6 +56,10 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
 
     sendConnectionData(data: ServerConnectionData) {
         this._sendMessage(this._createMessage(MessageType.SERVER_CONNECTION_DATA, data));
+    }
+
+    sendLiveUpdateData(data: LiveUpdateData) {
+        this._sendMessage(this._createMessage(MessageType.LIVE_UPDATE_DATA, data));
     }
 
     close() {

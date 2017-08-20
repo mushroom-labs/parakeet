@@ -58,6 +58,7 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
                 {
                     const data = message.data as LiveUpdateData;
                     console.group(`LiveUpdate ${data.deltaTime}ms`);
+                    console.log(`[PLAYER]: (${data.player.x},${data.player.y})`);
                     for (const actorUid of Object.keys(data.actors)) {
                         console.log(`[${actorUid}]: (${data.actors[actorUid].x},${data.actors[actorUid].y})`);
                     }
