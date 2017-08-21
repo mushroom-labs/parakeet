@@ -9,6 +9,8 @@ export enum MessageType {
     // Server
     SERVER_CONNECTION_DATA,
     LIVE_UPDATE_DATA,
+    PLAYER_CONNECTED,
+    PLAYER_DISCONNECTED,
 
     // Client
     CLIENT_CONNECTION_DATA,
@@ -26,10 +28,17 @@ export namespace MessageDataType {
     export type LogWarnData = string;
     export type LogErrorData = string;
     export type ServerConnectionData = {
-        id: string,
+        uid: string,
+        players: string[],
     }
     export type ClientConnectionData = {
         name: string,
+    }
+    export type PlayerConnectedData = {
+        uid: string,
+    }
+    export type PlayerDisconnectedData = {
+        uid: string,
     }
     type ActorData =  {
         x: number,

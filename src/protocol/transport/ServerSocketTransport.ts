@@ -8,6 +8,8 @@ import ServerConnectionData = MessageDataType.ServerConnectionData;
 import LiveUpdateData = MessageDataType.LiveUpdateData;
 import MoveActionData = MessageDataType.MoveActionData;
 import MouseActionData = MessageDataType.MouseActionData;
+import PlayerConnectedData = MessageDataType.PlayerConnectedData;
+import PlayerDisconnectedData = MessageDataType.PlayerDisconnectedData;
 
 export class ServerSocketTransport extends AbstractMessageTransport implements IServerMessageTransport {
     private _clientConnectionOpenEvent = new EventDispatcher<IServerClientMessageTransport>();
@@ -18,7 +20,9 @@ export class ServerSocketTransport extends AbstractMessageTransport implements I
         this._socketServer = socket;
 
         this._socketServer.on("connection",(clientSocket: WebSocket) => {
-            this._clientConnectionOpenEvent.dispatch(new ServerClientSocketTransport(clientSocket));
+            // clientSocket.on("open", () => {
+                this._clientConnectionOpenEvent.dispatch(new ServerClientSocketTransport(clientSocket));
+            // });
         })
     }
 
@@ -41,6 +45,7 @@ export class ServerSocketTransport extends AbstractMessageTransport implements I
 
 class ServerClientSocketTransport extends AbstractMessageTransport implements IServerClientMessageTransport {
     private _socket: WebSocket;
+    private _connectionCloseEvent = new EventDispatcher<null>();
     private _connectionDataEvent = new EventDispatcher<ClientConnectionData>();
     private _moveActionDataEvent = new EventDispatcher<MoveActionData>();
     private _mouseActionDataEvent = new EventDispatcher<MouseActionData>();
@@ -51,7 +56,15 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
 
         this._socket.on("message",(message: string) => {
             this._processMessage(JSON.parse(message) as Message);
+        });
+
+        this._socket.on("close", () => {
+            this._connectionCloseEvent.dispatch(null);
         })
+    }
+
+    connectionCloseEvent(): EventDispatcher<null> {
+        return this._connectionCloseEvent;
     }
 
     connectionDataEvent(): EventDispatcher<ClientConnectionData> {
@@ -74,6 +87,14 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
         this._sendMessage(this._createMessage(MessageType.LIVE_UPDATE_DATA, data));
     }
 
+    sendPlayerConnected(data: PlayerConnectedData) {
+        this._sendMessage(this._createMessage(MessageType.PLAYER_CONNECTED, data));
+    }
+
+    sendPlayerDisconnected(data: PlayerDisconnectedData) {
+        this._sendMessage(this._createMessage(MessageType.PLAYER_DISCONNECTED, data));
+    }
+
     close() {
         this._socket.close();
     }
@@ -88,12 +109,15 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
                 break;
             case MessageType.MOUSE_ACTION_DATA:
                 this._mouseActionDataEvent.dispatch(message.data as MouseActionData);
+                break;
             default:
                 super._processMessage(message);
         }
     }
 
     protected _sendMessage(message: Message) {
-        this._socket.send(JSON.stringify(message));
+        if (this._socket.readyState === WebSocket.OPEN) {
+            this._socket.send(JSON.stringify(message));
+        }
     }
 }

@@ -7,12 +7,15 @@ import {ActionController} from "./model/ActionController";
 import MoveActionData = MessageDataType.MoveActionData;
 import {MoveDirection} from "../client/engine/MoveDirection";
 import * as Box2D from "../../lib/box2dweb";
+import {EventDispatcher} from "../EventDispatcher";
 
 export class ClientController {
+    private _connectionCloseEvent = new EventDispatcher<null>();
     private _messageTransport: IServerClientMessageTransport;
     private _world: World;
     private _actor: Actor;
     private _actionController: ActionController;
+    private _uid: string;
 
     constructor(messageTransport: IServerClientMessageTransport, world: World) {
         this._messageTransport = messageTransport;
@@ -25,11 +28,19 @@ export class ClientController {
         this._messageTransport.logWarnMessageEvent().addListener((data) => { console.warn(data) });
         this._messageTransport.logErrorMessageEvent().addListener((data) => { console.error(data) });
 
+        this._messageTransport.connectionCloseEvent().addListener(() => {
+            this._connectionCloseEvent.dispatch(null);
+        });
+
         this._actor = world.createActor();
+        this._uid = this._actor.uid();
         this._messageTransport.connectionDataEvent().addListener((data: ClientConnectionData) => {
             this._actor.setName(data.name);
             this._messageTransport.sendConnectionData({
-                id: this._actor.uid(),
+                uid: this._actor.uid(),
+                players: world.actors().keys().filter((uid: string) => {
+                    return uid != this._actor.uid();
+                }),
             })
 
             // === process client messages ===
@@ -54,8 +65,16 @@ export class ClientController {
         });
 
         this._messageTransport.mouseActionDataEvent().addListener((data) => {
-            console.log(this._actor.name(), "mouse", data);
+            // console.log(this._actor.name(), "mouse", data);
         });
+    }
+
+    uid(): string {
+        return this._uid;
+    }
+
+    connectionCloseEvent(): EventDispatcher<null> {
+        return this._connectionCloseEvent;
     }
 
     sendLiveUpdateData(deltaTime: number) {
@@ -80,6 +99,18 @@ export class ClientController {
             deltaTime: deltaTime,
             player: playerData,
             actors: actorsData,
+        })
+    }
+
+    sendPlayerConnected(uid: string) {
+        this._messageTransport.sendPlayerConnected({
+            uid: uid,
+        })
+    }
+
+    sendPlayerDisconnected(uid: string) {
+        this._messageTransport.sendPlayerDisconnected({
+            uid: uid,
         })
     }
 

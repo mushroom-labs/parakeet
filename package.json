@@ -4,7 +4,7 @@
   "scripts": {
     "build:server": "tsc --project ./tsconfig.server.json",
     "build:client:tsc": "tsc --project ./tsconfig.client.json",
-    "build:client:bundle": "browserify ./bin/build/main_client.js -o ./bin/client/build/bundle.js"
+    "build:client:bundle": "browserify ./bin/build/main_client.js -o ./bin/client/build/bundle.js",
     "build:client": "npm run-script build:client:tsc && npm run-script build:client:bundle",
     "build": "npm run-script build:server && npm run-script build:client",
     "start": "cd bin/build && node main_server.js",

@@ -7,11 +7,15 @@ import ServerConnectionData = MessageDataType.ServerConnectionData;
 import LiveUpdateData = MessageDataType.LiveUpdateData;
 import MoveActionData = MessageDataType.MoveActionData;
 import MouseActionData = MessageDataType.MouseActionData;
+import PlayerDisconnectedData = MessageDataType.PlayerDisconnectedData;
+import PlayerConnectedData = MessageDataType.PlayerConnectedData;
 
 export class ClientSocketTransport extends AbstractMessageTransport implements IClientMessageTransport {
     private _connectionOpenEvent = new EventDispatcher<null>();
     private _connectionCloseEvent = new EventDispatcher<null>();
     private _connectionDataEvent = new EventDispatcher<ServerConnectionData>();
+    private _playerConnectedEvent = new EventDispatcher<PlayerConnectedData>();
+    private _playerDisconnectedEvent = new EventDispatcher<PlayerDisconnectedData>();
     private _liveUpdateDataEvent = new EventDispatcher<LiveUpdateData>();
     private _socket: WebSocket;
 
@@ -44,6 +48,14 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
         return this._connectionDataEvent;
     }
 
+    playerConnectedEvent(): EventDispatcher<PlayerConnectedData> {
+        return this._playerConnectedEvent;
+    }
+
+    playerDisconnectedEvent(): EventDispatcher<PlayerDisconnectedData> {
+        return this._playerDisconnectedEvent
+    }
+
     liveUpdateDataEvent(): EventDispatcher<LiveUpdateData> {
         return this._liveUpdateDataEvent;
     }
@@ -71,6 +83,14 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
                 break;
             case MessageType.LIVE_UPDATE_DATA:
                 this._liveUpdateDataEvent.dispatch(message.data as LiveUpdateData);
+                break;
+            case MessageType.PLAYER_CONNECTED:
+                this._playerConnectedEvent.dispatch(message.data as PlayerConnectedData);
+                console.log("connected: " + message.data.uid);
+                break;
+            case MessageType.PLAYER_DISCONNECTED:
+                this._playerDisconnectedEvent.dispatch(message.data as PlayerDisconnectedData);
+                console.log("disconnected: " + message.data.uid);
                 break;
             default:
                 super._processMessage(message);

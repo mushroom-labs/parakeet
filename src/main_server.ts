@@ -13,7 +13,7 @@ app.use("/", express.static(clientAppPath));
 const server = http.createServer(app);
 const webSocketServer: WebSocket.Server = new WebSocket.Server({server});
 
-const PORT = 3000;
+const PORT = 3001;
 server.listen(PORT, () => {
     console.log(`Server started on port ${server.address().port}`);
     GameServer.initGameServer(new ServerSocketTransport(webSocketServer));

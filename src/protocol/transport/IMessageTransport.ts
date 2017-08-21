@@ -8,6 +8,8 @@ import ServerConnectionData = MessageDataType.ServerConnectionData;
 import LiveUpdateData = MessageDataType.LiveUpdateData;
 import MoveActionData = MessageDataType.MoveActionData;
 import MouseActionData = MessageDataType.MouseActionData;
+import PlayerConnectedData = MessageDataType.PlayerConnectedData;
+import PlayerDisconnectedData = MessageDataType.PlayerDisconnectedData;
 
 export interface IMessageTransport {
     sendLogInfoMessage(data: LogInfoData);
@@ -24,6 +26,8 @@ export interface IClientMessageTransport  extends IMessageTransport {
     connectionOpenEvent(): EventDispatcher<null>;
     connectionCloseEvent(): EventDispatcher<null>;
     connectionDataEvent(): EventDispatcher<ServerConnectionData>;
+    playerConnectedEvent(): EventDispatcher<PlayerConnectedData>;
+    playerDisconnectedEvent(): EventDispatcher<PlayerDisconnectedData>;
     liveUpdateDataEvent(): EventDispatcher<LiveUpdateData>;
     sendConnectionData(data: ClientConnectionData);
     sendMoveAction(data: MoveActionData);
@@ -39,6 +43,9 @@ export interface IServerMessageTransport  extends IMessageTransport {
 export interface IServerClientMessageTransport  extends IMessageTransport {
     sendConnectionData(data: ServerConnectionData);
     sendLiveUpdateData(data: LiveUpdateData);
+    sendPlayerConnected(data: PlayerConnectedData);
+    sendPlayerDisconnected(data: PlayerDisconnectedData);
+    connectionCloseEvent(): EventDispatcher<null>;
     connectionDataEvent(): EventDispatcher<ClientConnectionData>;
     moveActionDataEvent(): EventDispatcher<MoveActionData>;
     mouseActionDataEvent(): EventDispatcher<MouseActionData>;

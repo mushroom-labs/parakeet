@@ -49,6 +49,18 @@ export namespace GameServer {
 
         serverMessageTransport.clientConnectionOpenEvent().addListener((clientMessageTransport: IServerClientMessageTransport) => {
             const clientController = new ClientController(clientMessageTransport, world);
+
+            clientController.connectionCloseEvent().addListener(() => {
+                for (const controller of clientControllers) {
+                    if (clientController != controller) {
+                        controller.sendPlayerDisconnected(clientController.uid());
+                    }
+                }
+            });
+            for (const controller of clientControllers) {
+                controller.sendPlayerConnected(clientController.uid());
+            }
+
             clientControllers.push(clientController);
         });
     }
