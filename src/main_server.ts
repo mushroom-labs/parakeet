@@ -6,7 +6,7 @@ import {GameServer} from "./server/GameServer";
 import {ServerSocketTransport} from "./protocol/transport/ServerSocketTransport";
 
 const app = express();
-const binDir = path.join(__dirname, "../../");
+const binDir = path.join(__dirname, "../");
 const clientAppPath = path.join(binDir, "./client");
 app.use("/", express.static(clientAppPath));
 

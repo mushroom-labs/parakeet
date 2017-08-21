@@ -1,4 +1,4 @@
-import {Vec2} from "engine/graphic/Vec2"
+import {Vec2} from "./graphic/Vec2";
 
 export class Player {
     private _position: Vec2;
