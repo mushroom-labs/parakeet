@@ -9,6 +9,7 @@ import {Window} from "../Window";
 import {Painter} from "../engine/Painter";
 import {Player} from "../engine/Player";
 import {Vec2} from "../engine/graphic/Vec2";
+import {GameStorage} from "../engine/GameStorage";
 
 export class GameScene implements IScene {
     private _keyboardController: KeyboardController;
@@ -19,9 +20,15 @@ export class GameScene implements IScene {
         this._keyboardController = new KeyboardController(window.container());
         this._mouseController = new MouseController(window.container());
 
-        const player = new Player();
+        const activePlayer = new Player(connectionData.uid);
 
-        this._painter = new Painter(window.context(), player);
+        const storage = new GameStorage(activePlayer);
+        for (const playerUid of connectionData.players) {
+            const player = new Player(playerUid);
+            storage.addPlayer(player);
+        }
+
+        this._painter = new Painter(window.context(), storage);
 
         this._keyboardController.keyboardActionEvent().addListener((data) => {
             transport.sendMoveAction({
@@ -37,10 +44,22 @@ export class GameScene implements IScene {
             });
         });
 
-        console.log("ConnectionData", connectionData);
+        transport.playerConnectedEvent().addListener((data) => {
+            const player = new Player(data.uid);
+            storage.addPlayer(player);
+        });
+
+        transport.playerDisconnectedEvent().addListener((data) => {
+            storage.removePlayer(data.uid);
+        });
 
         transport.liveUpdateDataEvent().addListener((data: LiveUpdateData) => {
-            player.setPosition(new Vec2(data.player.x, data.player.y));
+            storage.activePlayer().setPosition(new Vec2(data.player.x, data.player.y));
+            for (const actorUid in data.actors)
+            {
+                const position = data.actors[actorUid];
+                storage.getPlayer(actorUid).setPosition(new Vec2(position.x, position.y));
+            }
         });
     }
 
