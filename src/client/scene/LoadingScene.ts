@@ -16,14 +16,12 @@ export class LoadingScene implements IScene {
     private _connectionEstablishedEvent = new EventDispatcher<null>();
     private _input: HTMLInputElement;
     private _button: HTMLButtonElement;
-    private _resourceLoader = new ResourceLoader();
+    private _resourceLoader: ResourceLoader;
 
-    constructor(context: CanvasRenderingContext2D, connector: Connector) {
+    constructor(context: CanvasRenderingContext2D, connector: Connector, resourceLoader: ResourceLoader) {
         this._context = context;
         this._connector = connector;
-
-        this._resourceLoader.addFont(new FontResource("Permanent Marker Regular", "../fonts/PermanentMarker-Regular.ttf"));
-        this._resourceLoader.addImage(new ImageResource("mainmenu", "img/mainmenu.jpg"));
+        this._resourceLoader = resourceLoader;
     }
 
     moveToGameSceneEvent(): EventDispatcher<null> {

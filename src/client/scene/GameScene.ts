@@ -10,15 +10,18 @@ import {Painter} from "../engine/Painter";
 import {Player} from "../engine/Player";
 import {Vec2} from "../engine/graphic/Vec2";
 import {GameStorage} from "../engine/GameStorage";
+import {ResourceLoader} from "../engine/loader/ResourceLoader";
 
 export class GameScene implements IScene {
     private _keyboardController: KeyboardController;
     private _mouseController: MouseController;
     private _painter: Painter;
+    private _resourceLoader: ResourceLoader;
 
-    constructor(connectionData: ServerConnectionData, transport: IClientMessageTransport, window: Window) {
+    constructor(connectionData: ServerConnectionData, transport: IClientMessageTransport, window: Window, resourceLoader: ResourceLoader) {
         this._keyboardController = new KeyboardController(window.container());
         this._mouseController = new MouseController(window.container());
+        this._resourceLoader = resourceLoader;
 
         const activePlayer = new Player(connectionData.uid);
 
@@ -28,7 +31,7 @@ export class GameScene implements IScene {
             storage.addPlayer(player);
         }
 
-        this._painter = new Painter(window.context(), storage);
+        this._painter = new Painter(window.context(), storage, this._resourceLoader);
 
         this._keyboardController.keyboardActionEvent().addListener((data) => {
             transport.sendMoveAction({
@@ -38,6 +41,7 @@ export class GameScene implements IScene {
         });
 
         this._mouseController.mouseActionEvent().addListener((data) => {
+            activePlayer.setMousePosition(data);
             transport.sendMouseAction({
                 x: data.x(),
                 y: data.y(),

@@ -6,20 +6,26 @@ import {IScene} from "../scene/IScene";
 import {Connector} from "../Connector";
 import {MessageDataType} from "../../protocol/Message";
 import ServerConnectionData = MessageDataType.ServerConnectionData;
+import {ResourceLoader} from "./loader/ResourceLoader";
 
 export class Engine {
+    static DEBUG = true;
+
     private _window: Window;
     private _connector: Connector;
     private _currentScene: IScene | null;
+    private _resourceLoader: ResourceLoader;
 
-    constructor(window: Window, connector: Connector) {
+    constructor(window: Window, connector: Connector, resourceLoader: ResourceLoader) {
         this._window = window;
         this._connector = connector;
+        this._resourceLoader = resourceLoader;
+
         this._currentScene = null;
     }
 
     run() {
-        const loadingScene = new LoadingScene(this._window.context(), this._connector);
+        const loadingScene = new LoadingScene(this._window.context(), this._connector, this._resourceLoader);
         loadingScene.connectionEstablishedEvent().addListener(this._connectionEstablishedHandler.bind(this));
 
         this._changeScene(loadingScene);
@@ -28,7 +34,7 @@ export class Engine {
     private _connectionEstablishedHandler() {
         const protocol = this._connector.protocol();
         protocol.connectionDataEvent().addListener((connectionData: ServerConnectionData) => {
-            const gameScene = new GameScene(connectionData, protocol, this._window);
+            const gameScene = new GameScene(connectionData, protocol, this._window, this._resourceLoader);
             this._changeScene(gameScene);
         })
     }

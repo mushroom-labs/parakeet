@@ -11,5 +11,7 @@ export namespace ClientResources {
 
         // images
         loader.addImage(new Image("mainmenu", "img/mainmenu.jpg"));
+        loader.addImage(new Image("sand", "img/sand.jpg"));
+        loader.addImage(new Image("move_rifle_0", "img/player/move_rifle_0.png"));
     }
 }
