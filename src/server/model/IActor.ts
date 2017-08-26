@@ -12,8 +12,11 @@ export interface IActor {
     size(): Box2D.Common.Math.b2Vec2;
 
     linearVelocity(): Box2D.Common.Math.b2Vec2;
+    angularVelocity(): number;
     applyImpulse(impulse: Box2D.Common.Math.b2Vec2);
+    setAngularVelocity(velocity: number);
+    processRotation(deltaTime: number);
 
-    rotateToPoint(x: number, y: number): void;
+    setViewPoint(x: number, y: number): void;
 
 }

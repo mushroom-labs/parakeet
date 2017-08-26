@@ -65,7 +65,7 @@ export class ClientController {
             });
 
             this._messageTransport.mouseActionDataEvent().addListener((data) => {
-                this._actor.rotateToPoint(data.x, data.y);
+                this._actor.setViewPoint(data.x, data.y);
             });
         });
     }

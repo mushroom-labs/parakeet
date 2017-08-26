@@ -30,6 +30,9 @@ export class World {
     }
 
     update(deltaTime: number) {
+        this._actors.forEach((actor: Actor) => {
+            actor.processRotation(deltaTime);
+        });
         this._b2World.Step(deltaTime, 1, 1);
     }
 

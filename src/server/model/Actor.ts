@@ -5,10 +5,12 @@ export class Actor implements IActor {
     private _uid: string;
     private _name: string;
     private _b2Body: Box2D.Dynamics.b2Body;
+    private _viewPoint: Box2D.Common.Math.b2Vec2;
 
     constructor(uid: string, b2Body: Box2D.Dynamics.b2Body) {
         this._uid = uid;
         this._b2Body = b2Body;
+        this._viewPoint = this.position().Copy();
     }
 
     b2Body(): Box2D.Dynamics.b2Body {
@@ -53,12 +55,31 @@ export class Actor implements IActor {
         return this._b2Body.GetLinearVelocity();
     }
 
+    angularVelocity(): number {
+        return this._b2Body.GetAngularVelocity();
+    }
+
     applyImpulse(impulse: Box2D.Common.Math.b2Vec2) {
         this._b2Body.ApplyImpulse(impulse, this._b2Body.GetWorldCenter());
     }
 
-    rotateToPoint(x: number, y: number): void {
-        this._b2Body.SetAngle(Math.atan2(y - this.position().y, x - this.position().x));
+    setAngularVelocity(velocity: number) {
+        this._b2Body.SetAngularVelocity(velocity);
+    }
+
+    processRotation(deltaTime: number) {
+        const desiredAngle = Math.atan2(this._viewPoint.y - this.position().y, this._viewPoint.x - this.position().x);
+        const bodyAngle = this._b2Body.GetAngle();
+        const nextAngle = bodyAngle + this.angularVelocity() * deltaTime;
+        let diffAngle = desiredAngle - nextAngle;
+        while ( diffAngle < -Math.PI ) diffAngle += Math.PI * 2;
+        while ( diffAngle >  Math.PI ) diffAngle -= Math.PI * 2;
+
+        this.setAngularVelocity(diffAngle * 0.001 * deltaTime);
+    }
+
+    setViewPoint(x: number, y: number): void {
+        this._viewPoint = new Box2D.Common.Math.b2Vec2(x, y);
     }
 
     static create(b2World: Box2D.Dynamics.b2World, uid: string): Actor {
@@ -68,6 +89,7 @@ export class Actor implements IActor {
         b2BodyDef.angle = 0;
         b2BodyDef.linearDamping = 0.0125;
         b2BodyDef.angularDamping = 0.0125;
+        b2BodyDef.allowSleep = false;
 
         const b2Body = b2World.CreateBody(b2BodyDef);
 
