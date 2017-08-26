@@ -86,11 +86,9 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
                 break;
             case MessageType.PLAYER_CONNECTED:
                 this._playerConnectedEvent.dispatch(message.data as PlayerConnectedData);
-                console.log("connected: " + message.data.uid);
                 break;
             case MessageType.PLAYER_DISCONNECTED:
                 this._playerDisconnectedEvent.dispatch(message.data as PlayerDisconnectedData);
-                console.log("disconnected: " + message.data.uid);
                 break;
             default:
                 super._processMessage(message);

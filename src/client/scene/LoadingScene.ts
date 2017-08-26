@@ -2,6 +2,9 @@ import {IClientMessageTransport} from "../../protocol/transport/IMessageTranspor
 import {EventDispatcher} from "../../EventDispatcher";
 import {IScene} from "./IScene"
 import {Connector} from "../Connector";
+import {ResourceLoader} from "../engine/loader/ResourceLoader";
+import {FontResource} from "../engine/loader/FontResource";
+import {ImageResource} from "../engine/loader/ImageResource";
 
 const GAME_NAME = "PARAKEET";
 const UI_ELEMENT_WIDTH = 250;
@@ -13,10 +16,12 @@ export class LoadingScene implements IScene {
     private _connectionEstablishedEvent = new EventDispatcher<null>();
     private _input: HTMLInputElement;
     private _button: HTMLButtonElement;
+    private _resourceLoader: ResourceLoader;
 
-    constructor(context: CanvasRenderingContext2D, connector: Connector) {
+    constructor(context: CanvasRenderingContext2D, connector: Connector, resourceLoader: ResourceLoader) {
         this._context = context;
         this._connector = connector;
+        this._resourceLoader = resourceLoader;
     }
 
     moveToGameSceneEvent(): EventDispatcher<null> {
@@ -28,23 +33,26 @@ export class LoadingScene implements IScene {
     }
 
     render() {
-        this._renderLogo();
-        this._renderNameInput();
+        this._resourceLoader.load().then(() => {
+            this._renderWelcome();
+        });
     }
 
     destroy() {
     }
 
-    private _renderLogo() {
-        const img = new Image();
-        img.onload = () => {
-            this._context.drawImage(img, 0, 0, this._context.canvas.width, this._context.canvas.height);
+    private _renderWelcome() {
+        this._renderLogo();
+        this._renderNameInput();
+    }
 
-            this._context.font = "50px Permanent Marker";
-            const x = this._context.canvas.clientWidth / 2 - this._context.measureText(GAME_NAME).width / 2;
-            this._context.fillText(GAME_NAME,x,350);
-        };
-        img.src = "img/mainmenu.jpg";
+    private _renderLogo() {
+        const image = this._resourceLoader.getImage("mainmenu");
+        this._context.drawImage(image, 0, 0, this._context.canvas.width, this._context.canvas.height);
+
+        this._context.font = "50px Permanent Marker";
+        const x = this._context.canvas.clientWidth / 2 - this._context.measureText(GAME_NAME).width / 2;
+        this._context.fillText(GAME_NAME,x,350);
     }
 
     private _renderProgress() {
