@@ -10,6 +10,7 @@ import * as Box2D from "../../lib/box2dweb";
 import {EventDispatcher} from "../EventDispatcher";
 import ActorConnectionData = MessageDataType.ActorConnectionData;
 import PlayerConnectionData = MessageDataType.PlayerConnectionData;
+import DebugDrawData = MessageDataType.DebugDrawData;
 
 export class ClientController {
     private _connectionCloseEvent = new EventDispatcher<null>();
@@ -103,6 +104,10 @@ export class ClientController {
             player: playerData,
             actors: actorsData,
         })
+    }
+
+    sendDebugDrawData(data: DebugDrawData) {
+        this._messageTransport.sendDebugDrawData(data);
     }
 
     sendPlayerConnected(data: PlayerConnectionData) {

@@ -6,6 +6,7 @@ import * as Box2D from "../../../lib/box2dweb";
 import {DebugDataCollector} from "../DebugDataCollector";
 import {MessageDataType} from "../../protocol/Message";
 import DebugDrawData = MessageDataType.DebugDrawData;
+import {GameServer} from "../GameServer";
 
 export class World {
     private _actors = new MapCollection<Actor>();
@@ -39,11 +40,13 @@ export class World {
             actor.processRotation(deltaTime);
         });
         this._b2World.Step(deltaTime, 1, 1);
-        this._b2World.DrawDebugData();
+        if (GameServer.DEBUG) {
+            this._b2World.DrawDebugData();
+        }
     }
 
     public getDebugDrawData(): DebugDrawData {
-        return this._debugDataCollector.getDebugDrawData();
+        return GameServer.DEBUG ? this._debugDataCollector.getDebugDrawData() : <DebugDrawData>{};
     }
 
     private _generateUid(prefix: string): string {

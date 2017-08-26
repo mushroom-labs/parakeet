@@ -7,6 +7,7 @@ import LogWarnData = MessageDataType.LogWarnData;
 import LogErrorData = MessageDataType.LogErrorData;
 
 export class GameServer {
+    static DEBUG = false;
     private _serverMessageTransport: IServerMessageTransport;
     private _world: World;
     private _clientControllers: Map<string, ClientController> = new Map<string, ClientController>();
@@ -33,12 +34,14 @@ export class GameServer {
                 clientController.update();
             });
             this._world.update(deltaTime);
-
-            this._serverMessageTransport.sendLogInfoMessage(JSON.stringify(this._world.getDebugDrawData()));
+            const debugData = this._world.getDebugDrawData();
 
             // === send update data ===
             this._clientControllers.forEach((clientController: ClientController, uid: string) => {
                 clientController.sendLiveUpdateData(deltaTime);
+                if (GameServer.DEBUG) {
+                    clientController.sendDebugDrawData(debugData);
+                }
             });
 
             // === call new loop iteration ===
