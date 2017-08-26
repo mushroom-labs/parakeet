@@ -8,6 +8,7 @@ export interface IImmutableMapCollection<T> {
 
 export interface IMapCollection<T> extends IImmutableMapCollection<T> {
     addItem(uid: string, item: T);
+    removeItem(uid: string);
 }
 
 export class MapCollection<T> implements IMapCollection<T> {
@@ -15,6 +16,10 @@ export class MapCollection<T> implements IMapCollection<T> {
 
     addItem(uid: string, item: T) {
         this._items.set(uid, item);
+    }
+
+    removeItem(uid: string) {
+        this._items.delete(uid);
     }
 
     itemUids(): string[] {

@@ -1,5 +1,6 @@
 import * as uuid from "uuid";
 import {Actor} from "./Actor";
+import {IActor} from "./IActor";
 import {IImmutableMapCollection, MapCollection} from "../../MapCollection";
 import * as Box2D from "../../../lib/box2dweb";
 
@@ -11,13 +12,20 @@ export class World {
         this._b2World = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0, 0), true);
     }
 
-    createActor(): Actor {
+    createActor(): IActor {
         const actor = Actor.create(this._b2World, this._generateUid("actor"));
         this._actors.addItem(actor.uid(), actor);
         return actor;
     }
 
-    actors(): IImmutableMapCollection<Actor> {
+    deleteActor(uid: string) {
+        const actor = this._actors.getItem(uid);
+        this._b2World.DestroyBody(actor.b2Body());
+        this._actors.removeItem(uid);
+        return actor;
+    }
+
+    actors(): IImmutableMapCollection<IActor> {
         return this._actors;
     }
 

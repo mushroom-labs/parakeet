@@ -2,7 +2,7 @@ import {IServerClientMessageTransport} from "../protocol/transport/IMessageTrans
 import {World} from "./model/World";
 import {MessageDataType} from "../protocol/Message";
 import ClientConnectionData = MessageDataType.ClientConnectionData;
-import {Actor} from "./model/Actor";
+import {IActor} from "./model/IActor";
 import {ActionController} from "./model/ActionController";
 import MoveActionData = MessageDataType.MoveActionData;
 import {MoveDirection} from "../client/engine/MoveDirection";
@@ -13,9 +13,8 @@ export class ClientController {
     private _connectionCloseEvent = new EventDispatcher<null>();
     private _messageTransport: IServerClientMessageTransport;
     private _world: World;
-    private _actor: Actor;
+    private _actor: IActor;
     private _actionController: ActionController;
-    private _uid: string;
 
     constructor(messageTransport: IServerClientMessageTransport, world: World) {
         this._messageTransport = messageTransport;
@@ -33,7 +32,6 @@ export class ClientController {
         });
 
         this._actor = world.createActor();
-        this._uid = this._actor.uid();
         this._messageTransport.connectionDataEvent().addListener((data: ClientConnectionData) => {
             this._actor.setName(data.name);
             this._messageTransport.sendConnectionData({
@@ -41,36 +39,35 @@ export class ClientController {
                 players: world.actors().keys().filter((uid: string) => {
                     return uid != this._actor.uid();
                 }),
-            })
+            });
 
             // === process client messages ===
-            //TODO
-        });
 
-        this._messageTransport.moveActionDataEvent().addListener((data: MoveActionData) => {
-            switch (data.direction) {
-                case MoveDirection.UP:
-                    this._actionController.moveUp = data.isPressed;
-                    break;
-                case MoveDirection.DOWN:
-                    this._actionController.moveDown = data.isPressed;
-                    break;
-                case MoveDirection.LEFT:
-                    this._actionController.moveLeft = data.isPressed;
-                    break;
-                case MoveDirection.RIGHT:
-                    this._actionController.moveRight = data.isPressed;
-                    break;
-            }
-        });
+            this._messageTransport.moveActionDataEvent().addListener((data: MoveActionData) => {
+                switch (data.direction) {
+                    case MoveDirection.UP:
+                        this._actionController.moveUp = data.isPressed;
+                        break;
+                    case MoveDirection.DOWN:
+                        this._actionController.moveDown = data.isPressed;
+                        break;
+                    case MoveDirection.LEFT:
+                        this._actionController.moveLeft = data.isPressed;
+                        break;
+                    case MoveDirection.RIGHT:
+                        this._actionController.moveRight = data.isPressed;
+                        break;
+                }
+            });
 
-        this._messageTransport.mouseActionDataEvent().addListener((data) => {
-            // console.log(this._actor.name(), "mouse", data);
+            this._messageTransport.mouseActionDataEvent().addListener((data) => {
+                //TODO
+            });
         });
     }
 
     uid(): string {
-        return this._uid;
+        return this._actor.uid();
     }
 
     connectionCloseEvent(): EventDispatcher<null> {
@@ -85,7 +82,7 @@ export class ClientController {
         };
 
         const actorsData = {};
-        this._world.actors().forEach((actor: Actor, uid: string) => {
+        this._world.actors().forEach((actor: IActor, uid: string) => {
             if (uid != this._actor.uid()) {
                 const position = actor.position();
                 actorsData[uid] = {

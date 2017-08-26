@@ -1,6 +1,7 @@
 import * as Box2D from "../../../lib/box2dweb";
+import {IActor} from "./IActor";
 
-export class Actor {
+export class Actor implements IActor {
     private _uid: string;
     private _name: string;
     private _b2Body: Box2D.Dynamics.b2Body;
@@ -8,6 +9,10 @@ export class Actor {
     constructor(uid: string, b2Body: Box2D.Dynamics.b2Body) {
         this._uid = uid;
         this._b2Body = b2Body;
+    }
+
+    b2Body(): Box2D.Dynamics.b2Body {
+        return this._b2Body;
     }
 
     uid(): string {
