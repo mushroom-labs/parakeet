@@ -18,7 +18,7 @@ export class GameServer {
     }
 
     run() {
-        const SERVER_FREQUENCY = 60; //hz
+        const SERVER_FREQUENCY = 10; //hz
         const LOOP_ITERATION_DELAY = 1000 / SERVER_FREQUENCY; //ms;
         let lastTimestamp = Date.now();
         const serverLoop = () => {
@@ -33,6 +33,8 @@ export class GameServer {
                 clientController.update();
             });
             this._world.update(deltaTime);
+
+            this._serverMessageTransport.sendLogInfoMessage(JSON.stringify(this._world.getDebugDrawData()));
 
             // === send update data ===
             this._clientControllers.forEach((clientController: ClientController, uid: string) => {

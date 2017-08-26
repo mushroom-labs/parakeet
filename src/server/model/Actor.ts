@@ -46,7 +46,6 @@ export class Actor implements IActor {
         const lowerRightPoint = aabb.lowerBound;
         const width = Math.abs(upperLeftPoint.x - lowerRightPoint.x);
         const height = Math.abs(upperLeftPoint.y - lowerRightPoint.y);
-        console.log(new Box2D.Common.Math.b2Vec2(width, height));
 
         return new Box2D.Common.Math.b2Vec2(width, height);
     }

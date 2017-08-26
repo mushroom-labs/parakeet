@@ -3,13 +3,18 @@ import {Actor} from "./Actor";
 import {IActor} from "./IActor";
 import {IImmutableMapCollection, MapCollection} from "../../MapCollection";
 import * as Box2D from "../../../lib/box2dweb";
+import {DebugDataCollector} from "../DebugDataCollector";
+import {MessageDataType} from "../../protocol/Message";
+import DebugDrawData = MessageDataType.DebugDrawData;
 
 export class World {
     private _actors = new MapCollection<Actor>();
     private _b2World: Box2D.Dynamics.b2World;
+    private _debugDataCollector: DebugDataCollector = new DebugDataCollector();
 
     constructor() {
         this._b2World = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0, 0), true);
+        this._b2World.SetDebugDraw(this._debugDataCollector);
     }
 
     createActor(): IActor {
@@ -34,6 +39,11 @@ export class World {
             actor.processRotation(deltaTime);
         });
         this._b2World.Step(deltaTime, 1, 1);
+        this._b2World.DrawDebugData();
+    }
+
+    public getDebugDrawData(): DebugDrawData {
+        return this._debugDataCollector.getDebugDrawData();
     }
 
     private _generateUid(prefix: string): string {

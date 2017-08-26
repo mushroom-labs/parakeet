@@ -9,6 +9,7 @@ import MoveActionData = MessageDataType.MoveActionData;
 import MouseActionData = MessageDataType.MouseActionData;
 import ActorDisconnectionData = MessageDataType.ActorDisconnectionData;
 import ActorConnectionData = MessageDataType.ActorConnectionData;
+import DebugDrawData = MessageDataType.DebugDrawData;
 
 export class ClientSocketTransport extends AbstractMessageTransport implements IClientMessageTransport {
     private _connectionOpenEvent = new EventDispatcher<null>();
@@ -17,6 +18,7 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
     private _playerConnectedEvent = new EventDispatcher<ActorConnectionData>();
     private _playerDisconnectedEvent = new EventDispatcher<ActorDisconnectionData>();
     private _liveUpdateDataEvent = new EventDispatcher<LiveUpdateData>();
+    private _debugDrawDataEvent = new EventDispatcher<DebugDrawData>();
     private _socket: WebSocket;
 
     constructor(socket: WebSocket) {
@@ -60,6 +62,10 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
         return this._liveUpdateDataEvent;
     }
 
+    debugDrawDataEvent(): EventDispatcher<DebugDrawData> {
+        return this._debugDrawDataEvent;
+    }
+
     close() {
         this._socket.close();
     }
@@ -83,6 +89,9 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
                 break;
             case MessageType.LIVE_UPDATE_DATA:
                 this._liveUpdateDataEvent.dispatch(message.data as LiveUpdateData);
+                break;
+            case MessageType.DEBUG_DRAW_DATA:
+                this._debugDrawDataEvent.dispatch(message.data as DebugDrawData);
                 break;
             case MessageType.PLAYER_CONNECTED:
                 this._playerConnectedEvent.dispatch(message.data as ActorConnectionData);

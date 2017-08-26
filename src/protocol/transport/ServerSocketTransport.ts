@@ -10,6 +10,7 @@ import MoveActionData = MessageDataType.MoveActionData;
 import MouseActionData = MessageDataType.MouseActionData;
 import PlayerConnectionData = MessageDataType.PlayerConnectionData;
 import PlayerDisconnectedData = MessageDataType.ActorDisconnectionData;
+import DebugDrawData = MessageDataType.DebugDrawData;
 
 export class ServerSocketTransport extends AbstractMessageTransport implements IServerMessageTransport {
     private _clientConnectionOpenEvent = new EventDispatcher<IServerClientMessageTransport>();
@@ -85,6 +86,10 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
 
     sendLiveUpdateData(data: LiveUpdateData) {
         this._sendMessage(this._createMessage(MessageType.LIVE_UPDATE_DATA, data));
+    }
+
+    sendDebugDrawData(data: DebugDrawData) {
+        this._sendMessage(this._createMessage(MessageType.DEBUG_DRAW_DATA, data));
     }
 
     sendActorConnectionData(data: PlayerConnectionData) {
