@@ -43,6 +43,7 @@ export namespace MessageDataType {
     type ActorData =  {
         x: number,
         y: number,
+        angle: number,
     }
     type PlayerData = ActorData & {
         //TODO: addition player data

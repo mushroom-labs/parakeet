@@ -78,7 +78,7 @@ export class GameServer {
     private _onClientConnectionClose(clientController: ClientController) {
         const clientUid = clientController.uid();
         this._clientControllers.forEach((currentClientController: ClientController) => {
-            if (clientUid != clientController.uid()) {
+            if (clientUid != currentClientController.uid()) {
                 currentClientController.sendPlayerDisconnected(clientController.uid());
             }
         });

@@ -4,6 +4,7 @@ export class Player {
     private _uid: string;
     private _position: Vec2;
     private _mousePosition: Vec2;
+    private _angle: number;
 
     constructor(uid) {
         this._uid = uid;
@@ -22,16 +23,16 @@ export class Player {
         return this._mousePosition;
     }
 
-    getMouseAngel(): number {
-        if (!this._mousePosition)
-        {
-            return 0;
-        }
-        return Math.atan2(this._mousePosition.y() - this._position.y(), this._mousePosition.x() - this._position.x());
+    angel(): number {
+        return this._angle;
     }
 
     setPosition(position: Vec2) {
         this._position = position;
+    }
+
+    setAngle(angle: number) {
+        this._angle = angle;
     }
 
     setMousePosition(mousePosition: Vec2) {

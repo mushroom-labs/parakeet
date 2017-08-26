@@ -59,10 +59,12 @@ export class GameScene implements IScene {
 
         transport.liveUpdateDataEvent().addListener((data: LiveUpdateData) => {
             storage.activePlayer().setPosition(new Vec2(data.player.x, data.player.y));
+            storage.activePlayer().setAngle(data.player.angle);
             for (const actorUid in data.actors)
             {
-                const position = data.actors[actorUid];
-                storage.getPlayer(actorUid).setPosition(new Vec2(position.x, position.y));
+                const actorInfo = data.actors[actorUid];
+                storage.getPlayer(actorUid).setPosition(new Vec2(actorInfo.x, actorInfo.y));
+                storage.getPlayer(actorUid).setAngle(actorInfo.angle);
             }
         });
     }

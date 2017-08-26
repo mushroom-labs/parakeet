@@ -53,7 +53,7 @@ export class Painter {
             this._drawDebugSightDirection(player);
         }
 
-        this._ctx.rotate(player.getMouseAngel());
+        this._ctx.rotate(player.angel());
 
         this._ctx.drawImage(image, -24, -16, 48, 32);
 

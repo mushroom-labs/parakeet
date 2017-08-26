@@ -61,7 +61,7 @@ export class ClientController {
             });
 
             this._messageTransport.mouseActionDataEvent().addListener((data) => {
-                //TODO
+                this._actor.rotateToPoint(data.x, data.y);
             });
         });
     }
@@ -79,6 +79,7 @@ export class ClientController {
         const playerData = {
             x: position.x,
             y: position.y,
+            angle: this._actor.angle(),
         };
 
         const actorsData = {};
@@ -88,6 +89,7 @@ export class ClientController {
                 actorsData[uid] = {
                     x: position.x,
                     y: position.y,
+                    angle: actor.angle(),
                 }
             }
         });

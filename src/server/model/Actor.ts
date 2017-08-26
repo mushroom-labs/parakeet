@@ -31,12 +31,20 @@ export class Actor implements IActor {
         return this._b2Body.GetPosition();
     }
 
+    angle(): number {
+        return this._b2Body.GetAngle();
+    }
+
     linearVelocity(): Box2D.Common.Math.b2Vec2 {
         return this._b2Body.GetLinearVelocity();
     }
 
     applyImpulse(impulse: Box2D.Common.Math.b2Vec2) {
         this._b2Body.ApplyImpulse(impulse, this._b2Body.GetWorldCenter());
+    }
+
+    rotateToPoint(x: number, y: number): void {
+        this._b2Body.SetAngle(Math.atan2(y - this.position().y, x - this.position().x));
     }
 
     static create(b2World: Box2D.Dynamics.b2World, uid: string): Actor {

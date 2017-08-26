@@ -8,6 +8,9 @@ export interface IActor {
     setName(name: string);
 
     position(): Box2D.Common.Math.b2Vec2;
+    angle(): number;
     linearVelocity(): Box2D.Common.Math.b2Vec2;
     applyImpulse(impulse: Box2D.Common.Math.b2Vec2);
+
+    rotateToPoint(x: number, y: number): void;
 }
