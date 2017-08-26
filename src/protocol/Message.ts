@@ -27,25 +27,31 @@ export namespace MessageDataType {
     export type LogInfoData = string;
     export type LogWarnData = string;
     export type LogErrorData = string;
-    export type ServerConnectionData = {
+
+    export type ActorConnectionData = {
         uid: string,
-        players: string[],
+        width: number,
+        height: number,
+    }
+    export type PlayerConnectionData = ActorConnectionData & {
+        //TODO: addition player connection data
+    }
+    export type ServerConnectionData = {
+        player: PlayerConnectionData
+        actors: ActorConnectionData[],
     }
     export type ClientConnectionData = {
         name: string,
     }
-    export type PlayerConnectedData = {
+    export type ActorDisconnectionData = {
         uid: string,
     }
-    export type PlayerDisconnectedData = {
-        uid: string,
-    }
-    type ActorData =  {
+    export type ActorData =  {
         x: number,
         y: number,
         angle: number,
     }
-    type PlayerData = ActorData & {
+    export type PlayerData = ActorData & {
         //TODO: addition player data
     }
     export type MoveActionData = {

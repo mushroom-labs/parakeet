@@ -2262,7 +2262,7 @@ declare namespace Box2D.Collision.Shapes {
 		* Build vertices to represent an axis-aligned box.
 		* @param hx The half-width.
 		* @param hy The half-height.
-		* @return Box polygon shape.
+		* @return Box polygon shape.sd
 		**/
 		public static AsBox(hx: number, hy: number): b2PolygonShape;
 

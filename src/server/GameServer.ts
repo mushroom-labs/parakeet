@@ -64,7 +64,7 @@ export class GameServer {
 
         this._clientControllers.forEach((currentClientController: ClientController, currentClientUid: string) => {
             if (currentClientUid != clientUid) {
-                currentClientController.sendPlayerConnected(clientUid);
+                currentClientController.sendPlayerConnected(clientController.getPlayerConnectionData());
             }
         });
 

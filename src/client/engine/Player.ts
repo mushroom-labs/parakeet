@@ -5,10 +5,14 @@ export class Player {
     private _position: Vec2;
     private _mousePosition: Vec2;
     private _angle: number;
+    private _width: number;
+    private _height: number;
 
-    constructor(uid) {
+    constructor(uid, width, height) {
         this._uid = uid;
         this._position = new Vec2(20, 20);
+        this._width = width;
+        this._height = height;
     }
 
     uid(): string {
@@ -17,6 +21,14 @@ export class Player {
 
     position(): Vec2 {
         return this._position;
+    }
+
+    width(): number {
+        return this._width;
+    }
+
+    height(): number {
+        return this._height;
     }
 
     mousePosition(): Vec2 {

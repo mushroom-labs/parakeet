@@ -87,7 +87,9 @@ export class Painter {
         this._ctx.strokeStyle = "red";
         this._ctx.lineWidth = 1;
         this._ctx.beginPath();
-        this._ctx.rect(-24, -16, 48, 32);
+        const width = player.width();
+        const height = player.height();
+        this._ctx.rect(-width / 2, -height / 2, width, height);
         this._ctx.stroke();
 
         this._ctx.restore();

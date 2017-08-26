@@ -23,11 +23,12 @@ export class GameScene implements IScene {
         this._mouseController = new MouseController(window.container());
         this._resourceLoader = resourceLoader;
 
-        const activePlayer = new Player(connectionData.uid);
+        const playerData = connectionData.player;
+        const activePlayer = new Player(playerData.uid, playerData.width, playerData.height);
 
         const storage = new GameStorage(activePlayer);
-        for (const playerUid of connectionData.players) {
-            const player = new Player(playerUid);
+        for (const actorData of connectionData.actors) {
+            const player = new Player(actorData.uid, actorData.width, actorData.height);
             storage.addPlayer(player);
         }
 
@@ -48,12 +49,12 @@ export class GameScene implements IScene {
             });
         });
 
-        transport.playerConnectedEvent().addListener((data) => {
-            const player = new Player(data.uid);
+        transport.actorConnectedEvent().addListener((data) => {
+            const player = new Player(data.uid, data.width, data.height);
             storage.addPlayer(player);
         });
 
-        transport.playerDisconnectedEvent().addListener((data) => {
+        transport.actorDisconnectedEvent().addListener((data) => {
             storage.removePlayer(data.uid);
         });
 

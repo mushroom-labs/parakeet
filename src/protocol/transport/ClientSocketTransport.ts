@@ -7,15 +7,15 @@ import ServerConnectionData = MessageDataType.ServerConnectionData;
 import LiveUpdateData = MessageDataType.LiveUpdateData;
 import MoveActionData = MessageDataType.MoveActionData;
 import MouseActionData = MessageDataType.MouseActionData;
-import PlayerDisconnectedData = MessageDataType.PlayerDisconnectedData;
-import PlayerConnectedData = MessageDataType.PlayerConnectedData;
+import ActorDisconnectionData = MessageDataType.ActorDisconnectionData;
+import ActorConnectionData = MessageDataType.ActorConnectionData;
 
 export class ClientSocketTransport extends AbstractMessageTransport implements IClientMessageTransport {
     private _connectionOpenEvent = new EventDispatcher<null>();
     private _connectionCloseEvent = new EventDispatcher<null>();
     private _connectionDataEvent = new EventDispatcher<ServerConnectionData>();
-    private _playerConnectedEvent = new EventDispatcher<PlayerConnectedData>();
-    private _playerDisconnectedEvent = new EventDispatcher<PlayerDisconnectedData>();
+    private _playerConnectedEvent = new EventDispatcher<ActorConnectionData>();
+    private _playerDisconnectedEvent = new EventDispatcher<ActorDisconnectionData>();
     private _liveUpdateDataEvent = new EventDispatcher<LiveUpdateData>();
     private _socket: WebSocket;
 
@@ -48,11 +48,11 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
         return this._connectionDataEvent;
     }
 
-    playerConnectedEvent(): EventDispatcher<PlayerConnectedData> {
+    actorConnectedEvent(): EventDispatcher<ActorConnectionData> {
         return this._playerConnectedEvent;
     }
 
-    playerDisconnectedEvent(): EventDispatcher<PlayerDisconnectedData> {
+    actorDisconnectedEvent(): EventDispatcher<ActorDisconnectionData> {
         return this._playerDisconnectedEvent
     }
 
@@ -85,10 +85,10 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
                 this._liveUpdateDataEvent.dispatch(message.data as LiveUpdateData);
                 break;
             case MessageType.PLAYER_CONNECTED:
-                this._playerConnectedEvent.dispatch(message.data as PlayerConnectedData);
+                this._playerConnectedEvent.dispatch(message.data as ActorConnectionData);
                 break;
             case MessageType.PLAYER_DISCONNECTED:
-                this._playerDisconnectedEvent.dispatch(message.data as PlayerDisconnectedData);
+                this._playerDisconnectedEvent.dispatch(message.data as ActorDisconnectionData);
                 break;
             default:
                 super._processMessage(message);

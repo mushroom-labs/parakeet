@@ -35,6 +35,18 @@ export class Actor implements IActor {
         return this._b2Body.GetAngle();
     }
 
+    size(): Box2D.Common.Math.b2Vec2 {
+        const fixture = this._b2Body.GetFixtureList();
+        const aabb = new Box2D.Collision.b2AABB();
+        fixture.GetShape().ComputeAABB(aabb, new Box2D.Common.Math.b2Transform(new Box2D.Common.Math.b2Vec2(0, 0), new Box2D.Common.Math.b2Mat22()));
+
+        const upperBound = aabb.upperBound;
+        const lowerBound = aabb.lowerBound;
+        const leftBound = new Box2D.Common.Math.b2Vec2(upperBound.x, lowerBound.y);
+
+        return new Box2D.Common.Math.b2Vec2(upperBound.Length(), leftBound.Length())
+    }
+
     linearVelocity(): Box2D.Common.Math.b2Vec2 {
         return this._b2Body.GetLinearVelocity();
     }

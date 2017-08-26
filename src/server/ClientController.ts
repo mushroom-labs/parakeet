@@ -8,6 +8,8 @@ import MoveActionData = MessageDataType.MoveActionData;
 import {MoveDirection} from "../client/engine/MoveDirection";
 import * as Box2D from "../../lib/box2dweb";
 import {EventDispatcher} from "../EventDispatcher";
+import ActorConnectionData = MessageDataType.ActorConnectionData;
+import PlayerConnectionData = MessageDataType.PlayerConnectionData;
 
 export class ClientController {
     private _connectionCloseEvent = new EventDispatcher<null>();
@@ -35,9 +37,11 @@ export class ClientController {
         this._messageTransport.connectionDataEvent().addListener((data: ClientConnectionData) => {
             this._actor.setName(data.name);
             this._messageTransport.sendConnectionData({
-                uid: this._actor.uid(),
-                players: world.actors().keys().filter((uid: string) => {
+                player: this.getPlayerConnectionData(),
+                actors: world.actors().keys().filter((uid: string) => {
                     return uid != this._actor.uid();
+                }).map((uid: string) => {
+                    return this._createConnectionData(world.actors().getItem(uid));
                 }),
             });
 
@@ -101,16 +105,18 @@ export class ClientController {
         })
     }
 
-    sendPlayerConnected(uid: string) {
-        this._messageTransport.sendPlayerConnected({
+    sendPlayerConnected(data: PlayerConnectionData) {
+        this._messageTransport.sendActorConnectionData(data);
+    }
+
+    sendPlayerDisconnected(uid: string) {
+        this._messageTransport.sendActorDisconnectionData({
             uid: uid,
         })
     }
 
-    sendPlayerDisconnected(uid: string) {
-        this._messageTransport.sendPlayerDisconnected({
-            uid: uid,
-        })
+    getPlayerConnectionData(): PlayerConnectionData {
+        return this._createConnectionData(this._actor);
     }
 
     update() {
@@ -127,6 +133,15 @@ export class ClientController {
             impulse.Normalize();
             impulse.Multiply(MOVE_IMPULSE);
             this._actor.applyImpulse(impulse);
+        }
+    }
+
+    private _createConnectionData(actor: IActor): ActorConnectionData {
+        const actorSize = actor.size();
+        return {
+            uid: actor.uid(),
+            width: actorSize.x,
+            height: actorSize.y,
         }
     }
 }
