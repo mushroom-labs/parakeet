@@ -40,11 +40,13 @@ export class Actor implements IActor {
         const aabb = new Box2D.Collision.b2AABB();
         fixture.GetShape().ComputeAABB(aabb, new Box2D.Common.Math.b2Transform(new Box2D.Common.Math.b2Vec2(0, 0), new Box2D.Common.Math.b2Mat22()));
 
-        const upperBound = aabb.upperBound;
-        const lowerBound = aabb.lowerBound;
-        const leftBound = new Box2D.Common.Math.b2Vec2(upperBound.x, lowerBound.y);
+        const upperLeftPoint = aabb.upperBound;
+        const lowerRightPoint = aabb.lowerBound;
+        const width = Math.abs(upperLeftPoint.x - lowerRightPoint.x);
+        const height = Math.abs(upperLeftPoint.y - lowerRightPoint.y);
+        console.log(new Box2D.Common.Math.b2Vec2(width, height));
 
-        return new Box2D.Common.Math.b2Vec2(upperBound.Length(), leftBound.Length())
+        return new Box2D.Common.Math.b2Vec2(width, height);
     }
 
     linearVelocity(): Box2D.Common.Math.b2Vec2 {
@@ -65,6 +67,7 @@ export class Actor implements IActor {
         b2BodyDef.position = new Box2D.Common.Math.b2Vec2(0, 0);
         b2BodyDef.angle = 0;
         b2BodyDef.linearDamping = 0.0125;
+        b2BodyDef.angularDamping = 0.0125;
 
         const b2Body = b2World.CreateBody(b2BodyDef);
 

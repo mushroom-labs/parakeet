@@ -55,7 +55,10 @@ export class Painter {
 
         this._ctx.rotate(player.angel());
 
-        this._ctx.drawImage(image, -24, -16, 48, 32);
+        const spriteWidth = 48;
+        const spriteHeight = 32;
+
+        this._ctx.drawImage(image, -16, -17, spriteWidth, spriteHeight);
 
         if (Engine.DEBUG) {
             this._drawDebugBoundingBox(player);
