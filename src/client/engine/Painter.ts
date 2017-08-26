@@ -35,9 +35,8 @@ export class Painter {
     private _drawBackground() {
         const image = this._resourceLoader.getImage("sand");
         const texture = this._ctx.createPattern(image,"repeat");
-        this._ctx.rect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height);
         this._ctx.fillStyle = texture;
-        this._ctx.fill();
+        this._ctx.fillRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height);
     }
 
     private _drawPlayer(color: string, player: Player) {
