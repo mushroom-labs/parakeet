@@ -19,7 +19,7 @@ export class GameServer {
     }
 
     run() {
-        const SERVER_FREQUENCY = 10; //hz
+        const SERVER_FREQUENCY = 60; //hz
         const LOOP_ITERATION_DELAY = 1000 / SERVER_FREQUENCY; //ms;
         let lastTimestamp = Date.now();
         const serverLoop = () => {
