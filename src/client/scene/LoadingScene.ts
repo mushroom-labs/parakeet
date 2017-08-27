@@ -5,9 +5,11 @@ import {Connector} from "../Connector";
 import {ResourceLoader} from "../engine/loader/ResourceLoader";
 import {FontResource} from "../engine/loader/FontResource";
 import {ImageResource} from "../engine/loader/ImageResource";
+import {Engine} from "../engine/Engine";
 
 const GAME_NAME = "PARAKEET";
 const UI_ELEMENT_WIDTH = 250;
+const ENTER_KEY_CODE = 13;
 
 export class LoadingScene implements IScene {
     private _context: CanvasRenderingContext2D;
@@ -84,6 +86,12 @@ export class LoadingScene implements IScene {
         input.style.top = 450 + "px";
         input.style.left = x + "px";
         input.setAttribute("autofocus", "true");
+        input.addEventListener("keydown", (event) => {
+            this._input.style.border = "1px solid #666";
+            if (event.keyCode == ENTER_KEY_CODE) {
+                this._nameReceivedHandler(input.value);
+            }
+        });
         document.body.appendChild(input);
         input.focus();
 
@@ -94,12 +102,23 @@ export class LoadingScene implements IScene {
         button.style.left = x + "px";
         document.body.appendChild(button);
         button.addEventListener("click", () => {
-            console.log(this);
             this._nameReceivedHandler(input.value);
-        })
+        });
+
+        if (Engine.DEBUG)
+        {
+            const debugName = Math.random().toString(36).substring(7);
+            this._nameReceivedHandler(debugName);
+        }
     }
 
     private _nameReceivedHandler(name: string) {
+        if (name == "")
+        {
+            this._input.style.border = "1px solid red";
+            return;
+        }
+
         this._renderProgress();
 
         this._connector.open();
