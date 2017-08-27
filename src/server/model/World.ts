@@ -40,13 +40,11 @@ export class World {
             actor.processRotation(deltaTime);
         });
         this._b2World.Step(deltaTime, 1, 1);
-        if (GameServer.DEBUG) {
-            this._b2World.DrawDebugData();
-        }
     }
 
-    public getDebugDrawData(): DebugDrawData {
-        return GameServer.DEBUG ? this._debugDataCollector.getDebugDrawData() : <DebugDrawData>{};
+    public generateDebugDrawData(): DebugDrawData {
+        this._b2World.DrawDebugData();
+        return this._debugDataCollector.getDebugDrawData();
     }
 
     private _generateUid(prefix: string): string {

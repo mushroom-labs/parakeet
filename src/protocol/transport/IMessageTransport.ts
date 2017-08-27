@@ -14,13 +14,10 @@ import DebugDrawData = MessageDataType.DebugDrawData;
 
 export interface IMessageTransport {
     sendLogInfoMessage(data: LogInfoData);
-    logInfoMessageEvent(): EventDispatcher<LogInfoData>;
 
     sendLogWarnMessage(data: LogWarnData);
-    logWarnMessageEvent(): EventDispatcher<LogWarnData>;
 
     sendLogErrorMessage(data: LogErrorData);
-    logErrorMessageEvent(): EventDispatcher<LogErrorData>;
 }
 
 export interface IClientMessageTransport  extends IMessageTransport {

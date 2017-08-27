@@ -4,46 +4,46 @@ import LogWarnData = MessageDataType.LogWarnData;
 import LogErrorData = MessageDataType.LogErrorData;
 import {IMessageTransport} from "./IMessageTransport";
 import {EventDispatcher} from "../../EventDispatcher";
+import {ProjectConfiguration} from "../../ProjectConfiguration";
 
 export abstract class AbstractMessageTransport  implements IMessageTransport {
-    private _logInfoMessageEvent = new EventDispatcher<LogInfoData>();
-    private _logWarnMessageEvent = new EventDispatcher<LogWarnData>();
-    private _logErrorMessageEvent = new EventDispatcher<LogErrorData>();
-
-    logInfoMessageEvent(): EventDispatcher<LogInfoData> {
-        return this._logInfoMessageEvent;
-    }
-
-    logWarnMessageEvent(): EventDispatcher<LogWarnData> {
-        return this._logWarnMessageEvent;
-    }
-
-    logErrorMessageEvent(): EventDispatcher<LogErrorData> {
-        return this._logErrorMessageEvent;
-    }
-
     sendLogInfoMessage(data: LogInfoData) {
-        this._sendMessage(this._createMessage(MessageType.LOG_INFO, data));
+        if (ProjectConfiguration.TRANSPORT_LOG_INFO_FLAG)
+        {
+            this._sendMessage(this._createMessage(MessageType.LOG_INFO, data));
+        }
     }
 
     sendLogWarnMessage(data: LogWarnData) {
-        this._sendMessage(this._createMessage(MessageType.LOG_WARN, data));
+        if (ProjectConfiguration.TRANSPORT_LOG_WARN_FLAG)
+        {
+            this._sendMessage(this._createMessage(MessageType.LOG_WARN, data));
+        }
     }
 
     sendLogErrorMessage(data: LogErrorData) {
-        this._sendMessage(this._createMessage(MessageType.LOG_ERROR, data));
+        if (ProjectConfiguration.TRANSPORT_LOG_ERROR_FLAG)
+        {
+            this._sendMessage(this._createMessage(MessageType.LOG_ERROR, data));
+        }
     }
 
     protected _processMessage(message: Message) {
         switch (message.type) {
             case MessageType.LOG_INFO:
-                this._logInfoMessageEvent.dispatch(message.data as LogInfoData);
+                if (ProjectConfiguration.TRANSPORT_LOG_INFO_FLAG) {
+                    console.info(message.data as LogInfoData);
+                }
                 break;
             case MessageType.LOG_WARN:
-                this._logWarnMessageEvent.dispatch(message.data as LogWarnData);
+                if (ProjectConfiguration.TRANSPORT_LOG_WARN_FLAG) {
+                    console.warn(message.data as LogWarnData);
+                }
                 break;
             case MessageType.LOG_ERROR:
-                this._logErrorMessageEvent.dispatch(message.data as LogErrorData);
+                if (ProjectConfiguration.TRANSPORT_LOG_ERROR_FLAG) {
+                    console.error(message.data as LogErrorData);
+                }
                 break;
         }
     }

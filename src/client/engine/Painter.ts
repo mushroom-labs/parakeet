@@ -3,6 +3,7 @@ import {Vec2} from "./graphic/Vec2";
 import {Player} from "./Player";
 import {ResourceLoader} from "./loader/ResourceLoader";
 import {Engine} from "./Engine";
+import {ProjectConfiguration} from "../../ProjectConfiguration";
 
 const ACTIVE_PLAYER_COLOR = "green";
 const PLAYER_COLOR = "red";
@@ -48,7 +49,7 @@ export class Painter {
         this._ctx.save();
         this._ctx.translate(position.x(), position.y());
 
-        if (Engine.DEBUG) {
+        if (ProjectConfiguration.DEBUG_CLIENT_DRAW_FLAG) {
             this._drawDebugSightDirection(player);
         }
 
@@ -59,7 +60,7 @@ export class Painter {
 
         this._ctx.drawImage(image, -16, -17, spriteWidth, spriteHeight);
 
-        if (Engine.DEBUG) {
+        if (ProjectConfiguration.DEBUG_CLIENT_DRAW_FLAG) {
             this._drawDebugBoundingBox(player);
         }
 

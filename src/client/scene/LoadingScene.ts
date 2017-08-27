@@ -6,6 +6,7 @@ import {ResourceLoader} from "../engine/loader/ResourceLoader";
 import {FontResource} from "../engine/loader/FontResource";
 import {ImageResource} from "../engine/loader/ImageResource";
 import {Engine} from "../engine/Engine";
+import {ProjectConfiguration} from "../../ProjectConfiguration";
 
 const GAME_NAME = "PARAKEET";
 const UI_ELEMENT_WIDTH = 250;
@@ -105,7 +106,7 @@ export class LoadingScene implements IScene {
             this._nameReceivedHandler(input.value);
         });
 
-        if (Engine.DEBUG)
+        if (ProjectConfiguration.DEBUG_PLAYER_RANDOM_NAME_FLAG)
         {
             const debugName = Math.random().toString(36).substring(7);
             this._nameReceivedHandler(debugName);

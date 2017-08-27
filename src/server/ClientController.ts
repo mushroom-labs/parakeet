@@ -26,10 +26,6 @@ export class ClientController {
 
         this._messageTransport.sendLogInfoMessage("hello from server!");
 
-        this._messageTransport.logInfoMessageEvent().addListener((data) => { console.info(data) });
-        this._messageTransport.logWarnMessageEvent().addListener((data) => { console.warn(data) });
-        this._messageTransport.logErrorMessageEvent().addListener((data) => { console.error(data) });
-
         this._messageTransport.connectionCloseEvent().addListener(() => {
             this._connectionCloseEvent.dispatch(null);
         });

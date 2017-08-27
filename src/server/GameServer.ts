@@ -1,13 +1,9 @@
 import {IServerMessageTransport, IServerClientMessageTransport} from "../protocol/transport/IMessageTransport";
 import {World} from "./model/World";
 import {ClientController} from "./ClientController";
-import {MessageDataType} from "../protocol/Message";
-import LogInfoData = MessageDataType.LogInfoData;
-import LogWarnData = MessageDataType.LogWarnData;
-import LogErrorData = MessageDataType.LogErrorData;
+import {ProjectConfiguration} from "../ProjectConfiguration";
 
 export class GameServer {
-    static DEBUG = false;
     private _serverMessageTransport: IServerMessageTransport;
     private _world: World;
     private _clientControllers: Map<string, ClientController> = new Map<string, ClientController>();
@@ -34,15 +30,18 @@ export class GameServer {
                 clientController.update();
             });
             this._world.update(deltaTime);
-            const debugData = this._world.getDebugDrawData();
 
             // === send update data ===
             this._clientControllers.forEach((clientController: ClientController, uid: string) => {
                 clientController.sendLiveUpdateData(deltaTime);
-                if (GameServer.DEBUG) {
-                    clientController.sendDebugDrawData(debugData);
-                }
             });
+
+            if (ProjectConfiguration.DEBUG_PHYSICS_DRAW_FLAG) {
+                const debugData = this._world.generateDebugDrawData();
+                this._clientControllers.forEach((clientController: ClientController, uid: string) => {
+                    clientController.sendDebugDrawData(debugData);
+                });
+            }
 
             // === call new loop iteration ===
             const finalDeltaTime = Date.now() - lastTimestamp;
@@ -54,10 +53,6 @@ export class GameServer {
 
     private _initMessageTransport(serverMessageTransport: IServerMessageTransport) {
         this._serverMessageTransport = serverMessageTransport;
-        this._serverMessageTransport.logInfoMessageEvent().addListener((data: LogInfoData) => { console.info(data) });
-        this._serverMessageTransport.logWarnMessageEvent().addListener((data: LogWarnData) => { console.warn(data) });
-        this._serverMessageTransport.logErrorMessageEvent().addListener((data: LogErrorData) => { console.error(data) });
-
         this._serverMessageTransport.clientConnectionOpenEvent().addListener((clientMessageTransport: IServerClientMessageTransport) => {
             this._onClientConnectionOpen(clientMessageTransport);
         });
