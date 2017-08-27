@@ -40,6 +40,7 @@ export class ClientController {
                 }).map((uid: string) => {
                     return this._createConnectionData(world.actors().getItem(uid));
                 }),
+                map: this._world.map().getClientData(),
             });
 
             // === process client messages ===

@@ -1,9 +1,8 @@
 import {GameStorage} from "./GameStorage";
-import {Vec2} from "./graphic/Vec2";
 import {Player} from "./Player";
 import {ResourceLoader} from "./loader/ResourceLoader";
-import {Engine} from "./Engine";
 import {ProjectConfiguration} from "../../ProjectConfiguration";
+import {ClientMap} from "./map/ClientMap";
 
 const ACTIVE_PLAYER_COLOR = "green";
 const PLAYER_COLOR = "red";
@@ -12,11 +11,16 @@ export class Painter {
     private _ctx: CanvasRenderingContext2D;
     private _storage: GameStorage;
     private _resourceLoader: ResourceLoader;
+    private _map: ClientMap;
+    private _mapContext: CanvasRenderingContext2D;
 
-    constructor(ctx: CanvasRenderingContext2D, storage: GameStorage, resourceLoader: ResourceLoader) {
+    constructor(ctx: CanvasRenderingContext2D, storage: GameStorage, resourceLoader: ResourceLoader, map: ClientMap) {
         this._ctx = ctx;
         this._storage = storage;
         this._resourceLoader = resourceLoader;
+        this._map = map;
+
+        this._mapContext = this._createMapContext();
     }
 
     clear() {
@@ -34,14 +38,10 @@ export class Painter {
     }
 
     private _drawBackground() {
-        const image = this._resourceLoader.getImage("sand");
-        const texture = this._ctx.createPattern(image,"repeat");
-        this._ctx.fillStyle = texture;
-        this._ctx.fillRect(0, 0, this._ctx.canvas.width, this._ctx.canvas.height);
+        this._ctx.drawImage(this._mapContext.canvas, 0, 0);
     }
 
     private _drawPlayer(color: string, player: Player) {
-
         const position = player.position();
 
         const image = this._resourceLoader.getImage("move_rifle_0");
@@ -65,6 +65,29 @@ export class Painter {
         }
 
         this._ctx.restore();
+    }
+
+    private _createMapContext(): CanvasRenderingContext2D {
+        const canvas: HTMLCanvasElement = document.createElement("canvas");
+        canvas.style.visibility = "hidden";
+        document.body.appendChild(canvas);
+
+        canvas.width = this._ctx.canvas.width;
+        canvas.height = this._ctx.canvas.height;
+
+        const context = canvas.getContext("2d");
+
+        const grid = this._map.grid();
+        const gridLength = grid.length;
+        for (let i = 0; i < gridLength; ++i) {
+            const x = (i % this._map.width()) * this._map.tileWidth();
+            const y = Math.floor(i / this._map.width()) * this._map.tileHeight();
+
+            const tileId = grid[i] - 1;
+
+            context.drawImage(this._map.image(), tileId * this._map.tileWidth(), 0, this._map.tileHeight(), this._map.tileHeight(), x, y, this._map.tileWidth(), this._map.tileHeight());
+        }
+        return context;
     }
 
     private _drawDebugSightDirection(player: Player) {

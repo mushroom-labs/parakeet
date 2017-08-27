@@ -7,6 +7,8 @@ import {Connector} from "../Connector";
 import {MessageDataType} from "../../protocol/Message";
 import ServerConnectionData = MessageDataType.ServerConnectionData;
 import {ResourceLoader} from "./loader/ResourceLoader";
+import {MapLoader} from "./map/MapLoader";
+import {ClientMap} from "./map/ClientMap";
 
 export class Engine {
     static DEBUG = true;
@@ -34,9 +36,12 @@ export class Engine {
     private _connectionEstablishedHandler() {
         const protocol = this._connector.protocol();
         protocol.connectionDataEvent().addListener((connectionData: ServerConnectionData) => {
-            const gameScene = new GameScene(connectionData, protocol, this._window, this._resourceLoader);
-            this._changeScene(gameScene);
-        })
+            const mapLoader = new MapLoader();
+            mapLoader.load(connectionData.map).then((map: ClientMap) => {
+                const gameScene = new GameScene(connectionData, protocol, this._window, this._resourceLoader, map);
+                this._changeScene(gameScene);
+            });
+        });
     }
 
     private _changeScene(newScene: IScene) {

@@ -6,16 +6,24 @@ import * as Box2D from "../../../lib/box2dweb";
 import {DebugDataCollector} from "../DebugDataCollector";
 import {MessageDataType} from "../../protocol/Message";
 import DebugDrawData = MessageDataType.DebugDrawData;
-import {GameServer} from "../GameServer";
+import {IMap} from "./IMap";
 
 export class World {
     private _actors = new MapCollection<Actor>();
     private _b2World: Box2D.Dynamics.b2World;
     private _debugDataCollector: DebugDataCollector = new DebugDataCollector();
+    private _map: IMap;
 
-    constructor() {
+    constructor(map: IMap) {
+        this._map = map;
+
         this._b2World = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0, 0), true);
         this._b2World.SetDebugDraw(this._debugDataCollector);
+
+    }
+
+    map(): IMap {
+        return this._map;
     }
 
     createActor(): IActor {

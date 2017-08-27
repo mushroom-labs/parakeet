@@ -1,0 +1,19 @@
+{ "columns":2,
+ "image":"sand-tiles.png",
+ "imageheight":32,
+ "imagewidth":64,
+ "margin":0,
+ "name":"sand",
+ "spacing":0,
+ "tilecount":2,
+ "tileheight":32,
+ "tiles":
+    {
+     "1":
+        {
+         "type":"box"
+        }
+    },
+ "tilewidth":32,
+ "type":"tileset"
+}

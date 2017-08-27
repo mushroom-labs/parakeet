@@ -40,6 +40,7 @@ export namespace MessageDataType {
     export type ServerConnectionData = {
         player: PlayerConnectionData
         actors: ActorConnectionData[],
+        map: MapData,
     }
     export type ClientConnectionData = {
         name: string,
@@ -67,6 +68,16 @@ export namespace MessageDataType {
         deltaTime: number;
         player: ActorData,
         actors: { [uid: string]: ActorData };
+    }
+    export type MapData = {
+        grid: number[],
+        width: number,
+        height: number,
+        tileset: {
+            file: string,
+            width: number,
+            height: number,
+        }
     }
 
     // === debug data types ===
