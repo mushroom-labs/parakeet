@@ -4,6 +4,7 @@ import {ResourceLoader} from "./loader/ResourceLoader";
 import {ProjectConfiguration} from "../../ProjectConfiguration";
 import {ClientMap} from "./map/ClientMap";
 import {Window} from "../Window";
+import {DebugPainter} from "./DebugPainter";
 
 export class Painter {
     private _screenContext: CanvasRenderingContext2D;
@@ -11,6 +12,7 @@ export class Painter {
     private _storage: GameStorage;
     private _resourceLoader: ResourceLoader;
     private _map: ClientMap;
+    private _debugPainter: DebugPainter = null;
 
     constructor(window: Window, storage: GameStorage, resourceLoader: ResourceLoader, map: ClientMap) {
         this._screenContext = window.context();
@@ -18,6 +20,10 @@ export class Painter {
         this._storage = storage;
         this._resourceLoader = resourceLoader;
         this._map = map;
+    }
+
+    setDebugPainter(debugPainter: DebugPainter) {
+        this._debugPainter = debugPainter;
     }
 
     redraw() {
@@ -28,6 +34,11 @@ export class Painter {
 
         for (const player of this._storage.players()) {
             this._drawPlayer(player);
+        }
+
+        if (this._debugPainter)
+        {
+            this._debugPainter.draw();
         }
     }
 

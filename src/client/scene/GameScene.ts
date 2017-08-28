@@ -12,6 +12,9 @@ import {Vec2} from "../engine/graphic/Vec2";
 import {GameStorage} from "../engine/GameStorage";
 import {ResourceLoader} from "../engine/loader/ResourceLoader";
 import {ClientMap} from "../engine/map/ClientMap";
+import DebugDrawData = MessageDataType.DebugDrawData;
+import {ProjectConfiguration} from "../../ProjectConfiguration";
+import {DebugPainter} from "../engine/DebugPainter";
 
 export class GameScene implements IScene {
     private _keyboardController: KeyboardController;
@@ -73,6 +76,14 @@ export class GameScene implements IScene {
 
             this._painter.redraw();
         });
+
+        if (ProjectConfiguration.DEBUG_PHYSICS_DRAW_FLAG) {
+            const debugPainter = new DebugPainter(window);
+            transport.debugDrawDataEvent().addListener((data: DebugDrawData) => {
+                debugPainter.setData(data);
+            });
+            this._painter.setDebugPainter(debugPainter);
+        }
     }
 
     render() {

@@ -28,6 +28,14 @@ export class DebugDataCollector extends Box2D.Dynamics.b2DebugDraw {
         this.SetFlags(Box2D.Dynamics.b2DebugDraw.e_shapeBit);
     }
 
+    public reset() {
+        this._circleDatas = [];
+        this._solidCircleDatas = [];
+        this._polygonDatas = [];
+        this._solidPolygonDatas = [];
+        this._segmentDatas = [];
+    }
+
     public DrawCircle(center: Box2D.Common.Math.b2Vec2, radius: number, color: Box2D.Common.b2Color) {
         this._circleDatas.push({
             center: this._getVectorData(center),

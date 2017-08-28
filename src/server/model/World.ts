@@ -51,6 +51,7 @@ export class World {
     }
 
     public generateDebugDrawData(): DebugDrawData {
+        this._debugDataCollector.reset();
         this._b2World.DrawDebugData();
         return this._debugDataCollector.getDebugDrawData();
     }
