@@ -35,7 +35,7 @@ export class GameScene implements IScene {
             storage.addPlayer(player);
         }
 
-        this._painter = new Painter(window.context(), storage, this._resourceLoader, this._map);
+        this._painter = new Painter(window, storage, this._resourceLoader, this._map);
 
         this._keyboardController.keyboardActionEvent().addListener((data) => {
             transport.sendMoveAction({
@@ -70,17 +70,17 @@ export class GameScene implements IScene {
                 storage.getPlayer(actorUid).setPosition(new Vec2(actorInfo.x, actorInfo.y));
                 storage.getPlayer(actorUid).setAngle(actorInfo.angle);
             }
+
+            this._painter.redraw();
         });
     }
 
     render() {
-        requestAnimationFrame(this._renderFrame.bind(this));
-    }
-
-    private _renderFrame() {
-        this._painter.clear();
-        this._painter.draw();
-        requestAnimationFrame(this._renderFrame.bind(this));
+        const renderFrame = () => {
+            this._painter.render();
+            requestAnimationFrame(renderFrame);
+        };
+        requestAnimationFrame(renderFrame);
     }
 
     destroy() {

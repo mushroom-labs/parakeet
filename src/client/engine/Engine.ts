@@ -11,8 +11,6 @@ import {MapLoader} from "./map/MapLoader";
 import {ClientMap} from "./map/ClientMap";
 
 export class Engine {
-    static DEBUG = true;
-
     private _window: Window;
     private _connector: Connector;
     private _currentScene: IScene | null;
