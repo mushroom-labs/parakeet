@@ -6,29 +6,63 @@ import LiveUpdateData = MessageDataType.LiveUpdateData;
 import {KeyboardController} from "../engine/controller/KeyboardController";
 import {MouseController} from "../engine/controller/MouseController";
 import {Window} from "../Window";
-import {Painter} from "../engine/Painter";
 import {Player} from "../engine/Player";
 import {Vec2} from "../engine/graphic/Vec2";
 import {GameStorage} from "../engine/GameStorage";
 import {ResourceLoader} from "../engine/loader/ResourceLoader";
 import {ClientMap} from "../engine/map/ClientMap";
-import DebugDrawData = MessageDataType.DebugDrawData;
 import {ProjectConfiguration} from "../../ProjectConfiguration";
-import {DebugPainter} from "../engine/DebugPainter";
+import {GameRenderer} from "../engine/GameRenderer";
+import {Layer} from "../engine/render/Layer";
+import {MapRenderer} from "../engine/render/MapRenderer";
+import {PlayerRenderer} from "../engine/render/PlayerRenderer";
+import {PhysicsDebugRenderer} from "../engine/render/PhysicsDebugRenderer";
+import {ClientDebugRenderer} from "../engine/render/ClientDebugRenderer";
 
 export class GameScene implements IScene {
     private _keyboardController: KeyboardController;
     private _mouseController: MouseController;
-    private _painter: Painter;
     private _resourceLoader: ResourceLoader;
-    private _map: ClientMap;
+    private _renderer: GameRenderer;
+    private _storage: GameStorage;
 
     constructor(connectionData: ServerConnectionData, transport: IClientMessageTransport, window: Window, resourceLoader: ResourceLoader, map: ClientMap) {
         this._keyboardController = new KeyboardController(window.container());
         this._mouseController = new MouseController(window.container());
         this._resourceLoader = resourceLoader;
-        this._map = map;
+        this._storage = this._createStorage(connectionData);
 
+        this._renderer = new GameRenderer(window);
+        this._addRenderers(transport, map);
+
+        this._addInputControllerListeners(transport);
+        this._addTransportListeners(transport);
+    }
+
+    render() {
+        this._renderer.startGameLoop();
+    }
+
+    destroy() {
+
+    }
+
+    private _addRenderers(transport: IClientMessageTransport, map: ClientMap) {
+        const playerImage = this._resourceLoader.getImage("move_rifle_0");
+
+        this._renderer.setRenderer(Layer.MAP, new MapRenderer(map));
+        this._renderer.setRenderer(Layer.PLAYERS, new PlayerRenderer(this._storage, playerImage));
+
+        if (ProjectConfiguration.DEBUG_PHYSICS_DRAW_FLAG) {
+            this._renderer.setRenderer(Layer.PHYSICS_DEBUG, new PhysicsDebugRenderer(transport));
+        }
+
+        if (ProjectConfiguration.DEBUG_CLIENT_DRAW_FLAG) {
+            this._renderer.setRenderer(Layer.CLIENT_DEBUG, new ClientDebugRenderer(this._storage));
+        }
+    }
+
+    private _createStorage(connectionData: ServerConnectionData) {
         const playerData = connectionData.player;
         const activePlayer = new Player(playerData.uid, playerData.width, playerData.height);
 
@@ -38,8 +72,10 @@ export class GameScene implements IScene {
             storage.addPlayer(player);
         }
 
-        this._painter = new Painter(window, storage, this._resourceLoader, this._map);
+        return storage;
+    }
 
+    private _addInputControllerListeners(transport: IClientMessageTransport) {
         this._keyboardController.keyboardActionEvent().addListener((data) => {
             transport.sendMoveAction({
                 direction: data.direction,
@@ -48,53 +84,35 @@ export class GameScene implements IScene {
         });
 
         this._mouseController.mouseActionEvent().addListener((data) => {
-            activePlayer.setMousePosition(data);
+            this._storage.activePlayer().setMousePosition(data);
             transport.sendMouseAction({
                 x: data.x(),
                 y: data.y(),
             });
         });
+    }
 
+    private _addTransportListeners(transport: IClientMessageTransport) {
         transport.actorConnectedEvent().addListener((data) => {
             const player = new Player(data.uid, data.width, data.height);
-            storage.addPlayer(player);
+            this._storage.addPlayer(player);
         });
 
         transport.actorDisconnectedEvent().addListener((data) => {
-            storage.removePlayer(data.uid);
+            this._storage.removePlayer(data.uid);
         });
 
         transport.liveUpdateDataEvent().addListener((data: LiveUpdateData) => {
-            storage.activePlayer().setPosition(new Vec2(data.player.x, data.player.y));
-            storage.activePlayer().setAngle(data.player.angle);
+            this._storage.activePlayer().setPosition(new Vec2(data.player.x, data.player.y));
+            this._storage.activePlayer().setAngle(data.player.angle);
             for (const actorUid in data.actors)
             {
                 const actorInfo = data.actors[actorUid];
-                storage.getPlayer(actorUid).setPosition(new Vec2(actorInfo.x, actorInfo.y));
-                storage.getPlayer(actorUid).setAngle(actorInfo.angle);
+                this._storage.getPlayer(actorUid).setPosition(new Vec2(actorInfo.x, actorInfo.y));
+                this._storage.getPlayer(actorUid).setAngle(actorInfo.angle);
             }
 
-            this._painter.redraw();
+            this._renderer.render();
         });
-
-        if (ProjectConfiguration.DEBUG_PHYSICS_DRAW_FLAG) {
-            const debugPainter = new DebugPainter(window);
-            transport.debugDrawDataEvent().addListener((data: DebugDrawData) => {
-                debugPainter.setData(data);
-            });
-            this._painter.setDebugPainter(debugPainter);
-        }
-    }
-
-    render() {
-        const renderFrame = () => {
-            this._painter.render();
-            requestAnimationFrame(renderFrame);
-        };
-        requestAnimationFrame(renderFrame);
-    }
-
-    destroy() {
-
     }
 }
