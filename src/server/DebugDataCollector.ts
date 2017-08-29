@@ -85,11 +85,12 @@ export class DebugDataCollector extends Box2D.Dynamics.b2DebugDraw {
         }
     }
 
-    private _getColorData(color: Box2D.Common.b2Color): DebugColorData {
+    private _getColorData(b2Color: Box2D.Common.b2Color): DebugColorData {
+        const color = b2Color.color;
         return {
-            r: color.r || 0,
-            g: color.g || 0,
-            b: color.b || 0,
+            r: ((color & 0xff0000) >> 16),
+            g: ((color & 0x00ff00) >> 8),
+            b: ((color & 0x0000ff)),
         }
     }
 
