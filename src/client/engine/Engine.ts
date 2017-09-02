@@ -9,6 +9,7 @@ import ServerConnectionData = MessageDataType.ServerConnectionData;
 import {ResourceLoader} from "./loader/ResourceLoader";
 import {MapLoader} from "./map/MapLoader";
 import {ClientMap} from "./map/ClientMap";
+import {Logger} from "../../Logger";
 
 export class Engine {
     private _window: Window;
@@ -34,11 +35,11 @@ export class Engine {
     private _connectionEstablishedHandler() {
         const protocol = this._connector.protocol();
         protocol.connectionDataEvent().addListener((connectionData: ServerConnectionData) => {
-            // const mapLoader = new MapLoader();
-            // mapLoader.load(connectionData.map).then((map: ClientMap) => {
-                const gameScene = new GameScene(connectionData, protocol, this._window, this._resourceLoader, null);
+            const mapLoader = new MapLoader();
+            mapLoader.load(connectionData.map).then((map: ClientMap) => {
+                const gameScene = new GameScene(connectionData, protocol, this._window, this._resourceLoader, map);
                 this._changeScene(gameScene);
-            // });
+            });
         });
     }
 
