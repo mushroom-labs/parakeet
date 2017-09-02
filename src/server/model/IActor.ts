@@ -9,6 +9,7 @@ export interface IActor {
 
     position(): Box2D.Common.Math.b2Vec2;
     angle(): number;
+    viewDirection(): Box2D.Common.Math.b2Vec2;
     size(): Box2D.Common.Math.b2Vec2;
 
     linearVelocity(): Box2D.Common.Math.b2Vec2;

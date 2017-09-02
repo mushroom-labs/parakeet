@@ -1,24 +1,16 @@
 import * as Box2D from "../../../lib/box2dweb";
 import {IActor} from "./IActor";
+import {AbstractBody} from "./AbstractBody";
+import {BodyType} from "./BodyData";
+import {CollisionFilterType} from "./CollisionFilterType";
 
-export class Actor implements IActor {
-    private _uid: string;
+export class Actor extends AbstractBody implements IActor {
     private _name: string;
-    private _b2Body: Box2D.Dynamics.b2Body;
     private _viewPoint: Box2D.Common.Math.b2Vec2;
 
     constructor(uid: string, b2Body: Box2D.Dynamics.b2Body) {
-        this._uid = uid;
-        this._b2Body = b2Body;
+        super(BodyType.ACTOR, uid, b2Body);
         this._viewPoint = this.position().Copy();
-    }
-
-    b2Body(): Box2D.Dynamics.b2Body {
-        return this._b2Body;
-    }
-
-    uid(): string {
-        return this._uid;
     }
 
     setName(name: string) {
@@ -29,46 +21,32 @@ export class Actor implements IActor {
         return this._name;
     }
 
-    position(): Box2D.Common.Math.b2Vec2 {
-        return this._b2Body.GetPosition();
-    }
-
-    angle(): number {
-        return this._b2Body.GetAngle();
-    }
-
-    size(): Box2D.Common.Math.b2Vec2 {
-        const fixture = this._b2Body.GetFixtureList();
-        const aabb = new Box2D.Collision.b2AABB();
-        fixture.GetShape().ComputeAABB(aabb, new Box2D.Common.Math.b2Transform(new Box2D.Common.Math.b2Vec2(0, 0), new Box2D.Common.Math.b2Mat22()));
-
-        const upperLeftPoint = aabb.upperBound;
-        const lowerRightPoint = aabb.lowerBound;
-        const width = Math.abs(upperLeftPoint.x - lowerRightPoint.x);
-        const height = Math.abs(upperLeftPoint.y - lowerRightPoint.y);
-
-        return new Box2D.Common.Math.b2Vec2(width, height);
+    viewDirection(): Box2D.Common.Math.b2Vec2 {
+        const viewDirectionVec = this._viewPoint.Copy();
+        viewDirectionVec.Subtract(this.position());
+        viewDirectionVec.Normalize();
+        return viewDirectionVec;
     }
 
     linearVelocity(): Box2D.Common.Math.b2Vec2 {
-        return this._b2Body.GetLinearVelocity();
+        return this.b2Body().GetLinearVelocity();
     }
 
     angularVelocity(): number {
-        return this._b2Body.GetAngularVelocity();
+        return this.b2Body().GetAngularVelocity();
     }
 
     applyImpulse(impulse: Box2D.Common.Math.b2Vec2) {
-        this._b2Body.ApplyImpulse(impulse, this._b2Body.GetWorldCenter());
+        this.b2Body().ApplyImpulse(impulse, this.b2Body().GetWorldCenter());
     }
 
     setAngularVelocity(velocity: number) {
-        this._b2Body.SetAngularVelocity(velocity);
+        this.b2Body().SetAngularVelocity(velocity);
     }
 
     processRotation(deltaTime: number) {
         const desiredAngle = Math.atan2(this._viewPoint.y - this.position().y, this._viewPoint.x - this.position().x);
-        const bodyAngle = this._b2Body.GetAngle();
+        const bodyAngle = this.b2Body().GetAngle();
         const nextAngle = bodyAngle + this.angularVelocity() * deltaTime;
         let diffAngle = desiredAngle - nextAngle;
         while ( diffAngle < -Math.PI ) diffAngle += Math.PI * 2;
@@ -84,11 +62,12 @@ export class Actor implements IActor {
     static create(b2World: Box2D.Dynamics.b2World, uid: string): Actor {
         const b2BodyDef = new Box2D.Dynamics.b2BodyDef();
         b2BodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody;
-        b2BodyDef.position = new Box2D.Common.Math.b2Vec2(0, 0);
+        b2BodyDef.position = new Box2D.Common.Math.b2Vec2(50, 50);
         b2BodyDef.angle = 0;
         b2BodyDef.linearDamping = 0.0125;
         b2BodyDef.angularDamping = 0.0125;
         b2BodyDef.allowSleep = false;
+        b2BodyDef.bullet = true;
 
         const b2Body = b2World.CreateBody(b2BodyDef);
 
@@ -98,8 +77,10 @@ export class Actor implements IActor {
         const b2FixtureDef = new Box2D.Dynamics.b2FixtureDef();
         b2FixtureDef.shape = b2Shape;
         b2FixtureDef.density = 1;
+        b2FixtureDef.filter.categoryBits = CollisionFilterType.ACTOR;
+        b2FixtureDef.filter.maskBits = CollisionFilterType.ACTOR_OBSTACLES;
 
-        const b2Fixture = b2Body.CreateFixture(b2FixtureDef);
+        b2Body.CreateFixture(b2FixtureDef);
 
         return new Actor(uid, b2Body);
     }

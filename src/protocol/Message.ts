@@ -69,15 +69,28 @@ export namespace MessageDataType {
         player: ActorData,
         actors: { [uid: string]: ActorData };
     }
+    export type TileSetData = {
+        file: string,
+        tileWidth: number, // 1 tile in px
+        tileHeight: number, //1 tile in px
+    }
+    export type LayerData = {
+        data: number[],
+        name: string,
+    };
+    export type CellInfoData = {
+        width: number, // in meters
+        height: number, // in meters
+    };
+    export type GridData = {
+        layers: LayerData[];
+        layerWidth: number, //in cells
+        layerHeight: number, //in cells
+        cellInfo: CellInfoData,
+    }
     export type MapData = {
-        grid: number[],
-        width: number,
-        height: number,
-        tileset: {
-            file: string,
-            width: number,
-            height: number,
-        }
+        grid: GridData,
+        tileSet: TileSetData,
     }
 
     // === debug data types ===

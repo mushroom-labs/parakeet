@@ -6,23 +6,31 @@ import * as Box2D from "../../../lib/box2dweb";
 import {DebugDataCollector} from "../DebugDataCollector";
 import {MessageDataType} from "../../protocol/Message";
 import DebugDrawData = MessageDataType.DebugDrawData;
-import {IMap} from "./IMap";
+import {WorldMap} from "./map/WorldMap";
+import {Block} from "./Block";
 
 export class World {
     private _actors = new MapCollection<Actor>();
+    private _blocks = new MapCollection<Block>();
     private _b2World: Box2D.Dynamics.b2World;
     private _debugDataCollector: DebugDataCollector = new DebugDataCollector();
-    private _map: IMap;
+    private _map: WorldMap;
 
-    constructor(map: IMap) {
+    constructor(map: WorldMap) {
         this._map = map;
 
         this._b2World = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0, 0), true);
         this._b2World.SetDebugDraw(this._debugDataCollector);
 
+        for (const blockInfo of this._map.getBlockInfos()) {
+            const position = new Box2D.Common.Math.b2Vec2(blockInfo.x, blockInfo.y);
+            const nodes = blockInfo.nodes.map((nodeInfo) => new Box2D.Common.Math.b2Vec2(nodeInfo.x, nodeInfo.y));
+            this._createBlock(position, nodes);
+        }
+
     }
 
-    map(): IMap {
+    map(): WorldMap {
         return this._map;
     }
 
@@ -41,6 +49,11 @@ export class World {
 
     actors(): IImmutableMapCollection<IActor> {
         return this._actors;
+    }
+
+    private _createBlock(position: Box2D.Common.Math.b2Vec2, nodes: Box2D.Common.Math.b2Vec2[]) {
+        const block = Block.create(this._b2World, this._generateUid("block"), position, nodes);
+        this._blocks.addItem(block.uid(), block);
     }
 
     update(deltaTime: number) {

@@ -25,7 +25,7 @@ export class DebugDataCollector extends Box2D.Dynamics.b2DebugDraw {
 
     constructor() {
         super();
-        this.SetFlags(Box2D.Dynamics.b2DebugDraw.e_shapeBit);
+        this.SetFlags(Box2D.Dynamics.b2DebugDraw.e_shapeBit | Box2D.Dynamics.b2DebugDraw.e_aabbBit);
     }
 
     public reset() {

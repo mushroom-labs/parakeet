@@ -51,19 +51,19 @@ export class Painter {
     }
 
     private _drawMap() {
-        const grid = this._map.grid(),
-            gridLength = grid.length,
-            tileWidth = this._map.tileWidth(),
-            tileHeight = this._map.tileHeight();
-
-        for (let i = 0; i < gridLength; ++i) {
-            const x = (i % this._map.width()) * tileWidth;
-            const y = Math.floor(i / this._map.width()) * tileHeight;
-
-            const tileId = grid[i] - 1;
-
-            this._bufferContext.drawImage(this._map.image(), tileId * tileWidth, 0, tileHeight, tileHeight, x, y, tileWidth, tileHeight);
-        }
+        // const grid = this._map.grid(),
+        //     gridLength = grid.length,
+        //     tileWidth = this._map.tileWidth(),
+        //     tileHeight = this._map.tileHeight();
+        //
+        // for (let i = 0; i < gridLength; ++i) {
+        //     const x = (i % this._map.width()) * tileWidth;
+        //     const y = Math.floor(i / this._map.width()) * tileHeight;
+        //
+        //     const tileId = grid[i] - 1;
+        //
+        //     this._bufferContext.drawImage(this._map.image(), tileId * tileWidth, 0, tileHeight, tileHeight, x, y, tileWidth, tileHeight);
+        // }
     }
 
     private _drawPlayer(player: Player) {

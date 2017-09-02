@@ -5,6 +5,7 @@ import * as path from "path";
 import {GameServer} from "./server/GameServer";
 import {ServerSocketTransport} from "./protocol/transport/ServerSocketTransport";
 import {ProjectConfiguration} from "./ProjectConfiguration";
+import {Logger} from "./Logger";
 
 const app = express();
 const binDir = path.join(__dirname, "../");
@@ -15,7 +16,7 @@ const server = http.createServer(app);
 const webSocketServer: WebSocket.Server = new WebSocket.Server({server});
 
 server.listen(ProjectConfiguration.SERVER_PORT, ProjectConfiguration.SERVER_HOST, () => {
-    console.log(`Server started at http://${server.address().address}:${server.address().port}`);
+    Logger.info(`Server started at http://${server.address().address}:${server.address().port}`);
     const gameServer = new GameServer(new ServerSocketTransport(webSocketServer));
     gameServer.run();
 });

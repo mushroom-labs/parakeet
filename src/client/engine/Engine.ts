@@ -34,11 +34,11 @@ export class Engine {
     private _connectionEstablishedHandler() {
         const protocol = this._connector.protocol();
         protocol.connectionDataEvent().addListener((connectionData: ServerConnectionData) => {
-            const mapLoader = new MapLoader();
-            mapLoader.load(connectionData.map).then((map: ClientMap) => {
-                const gameScene = new GameScene(connectionData, protocol, this._window, this._resourceLoader, map);
+            // const mapLoader = new MapLoader();
+            // mapLoader.load(connectionData.map).then((map: ClientMap) => {
+                const gameScene = new GameScene(connectionData, protocol, this._window, this._resourceLoader, null);
                 this._changeScene(gameScene);
-            });
+            // });
         });
     }
 

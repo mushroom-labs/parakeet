@@ -5,6 +5,7 @@ import LogErrorData = MessageDataType.LogErrorData;
 import {IMessageTransport} from "./IMessageTransport";
 import {EventDispatcher} from "../../EventDispatcher";
 import {ProjectConfiguration} from "../../ProjectConfiguration";
+import {Logger} from "../../Logger";
 
 export abstract class AbstractMessageTransport  implements IMessageTransport {
     sendLogInfoMessage(data: LogInfoData) {
@@ -32,17 +33,17 @@ export abstract class AbstractMessageTransport  implements IMessageTransport {
         switch (message.type) {
             case MessageType.LOG_INFO:
                 if (ProjectConfiguration.TRANSPORT_LOG_INFO_FLAG) {
-                    console.info(message.data as LogInfoData);
+                    Logger.info(message.data as LogInfoData);
                 }
                 break;
             case MessageType.LOG_WARN:
                 if (ProjectConfiguration.TRANSPORT_LOG_WARN_FLAG) {
-                    console.warn(message.data as LogWarnData);
+                    Logger.warn(message.data as LogWarnData);
                 }
                 break;
             case MessageType.LOG_ERROR:
                 if (ProjectConfiguration.TRANSPORT_LOG_ERROR_FLAG) {
-                    console.error(message.data as LogErrorData);
+                    Logger.error(message.data as LogErrorData);
                 }
                 break;
         }

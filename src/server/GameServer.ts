@@ -2,7 +2,7 @@ import {IServerMessageTransport, IServerClientMessageTransport} from "../protoco
 import {World} from "./model/World";
 import {ClientController} from "./ClientController";
 import {ProjectConfiguration} from "../ProjectConfiguration";
-import {MapFileLoader} from "./MapFileLoader";
+import {WorldMap} from "./model/map/WorldMap";
 
 export class GameServer {
     private _serverMessageTransport: IServerMessageTransport;
@@ -10,9 +10,7 @@ export class GameServer {
     private _clientControllers: Map<string, ClientController> = new Map<string, ClientController>();
 
     constructor(serverMessageTransport: IServerMessageTransport) {
-        const mapLoader = new MapFileLoader();
-        const sandMap = mapLoader.load("../map/sand/map.json", "../map/sand/tileset.json");
-
+        const sandMap = new WorldMap("../map/sand/map.json");
         this._world = new World(sandMap);
 
         this._initMessageTransport(serverMessageTransport);
