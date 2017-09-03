@@ -8,7 +8,7 @@ import {NameInputForm} from "./NameInputForm";
 import {EventDispatcher} from "../../../EventDispatcher";
 
 const GAME_NAME_CENTER_OFFSET = -30;
-const NAME_INPUT_CENTER_OFFSET = 30;
+const NAME_INPUT_CENTER_OFFSET = 10;
 const UI_ELEMENT_WIDTH = 250;
 
 export class WelcomeScene implements IScene {

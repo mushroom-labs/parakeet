@@ -3,7 +3,7 @@ import {Vec2} from "../../../core/Vec2";
 import {EventDispatcher} from "../../../EventDispatcher";
 
 const ENTER_KEY_CODE = 13;
-const BUTTON_OFFSET = 35;
+const BUTTON_OFFSET = 45;
 
 export class NameInputForm {
     private _container: HTMLElement;
