@@ -33,7 +33,7 @@ export class GameScene implements IScene {
         this._mouseController = new MouseController(window.container());
         this._resourceLoader = resourceLoader;
         this._storage = this._createStorage(connectionData);
-        this._camera = new Camera(window.viewport());
+        this._camera = new Camera(window);
 
         this._renderer = new GameRenderer(window);
         this._addRenderers(transport, map, window);
@@ -46,9 +46,7 @@ export class GameScene implements IScene {
         this._renderer.startGameLoop();
     }
 
-    destroy() {
-
-    }
+    destroy() {}
 
     private _addRenderers(transport: IClientMessageTransport, map: ClientMap, window: Window) {
         const playerImage = this._resourceLoader.getImage("move_rifle_0");

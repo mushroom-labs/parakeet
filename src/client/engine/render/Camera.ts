@@ -1,16 +1,19 @@
 
-import {Size} from "../../../core/Size";
 import {Vec2} from "../../../core/Vec2";
+import {Window} from "../../Window";
 
 export class Camera {
-    private _viewport: Size;
     private _offset: Vec2;
     private _position: Vec2;
     private _anchorPoint = new Vec2(0, 0);
 
-    constructor(viewport: Size) {
-        this._viewport = viewport;
-        this._offset = new Vec2(this._viewport.width() / 2, this._viewport.height() / 2);
+    constructor(window: Window) {
+        const viewport = window.viewport();
+        this._offset = new Vec2(viewport.width() / 2, viewport.height() / 2);
+
+        window.viewportChangedEvent().addListener((viewport) => {
+            this._offset = new Vec2(viewport.width() / 2, viewport.height() / 2);
+        })
     }
 
     anchorPoint(): Vec2 {

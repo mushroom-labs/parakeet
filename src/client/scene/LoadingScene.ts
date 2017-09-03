@@ -1,136 +1,98 @@
-import {IClientMessageTransport} from "../../protocol/transport/IMessageTransport";
 import {EventDispatcher} from "../../EventDispatcher";
 import {IScene} from "./IScene"
 import {Connector} from "../Connector";
 import {ResourceLoader} from "../engine/loader/ResourceLoader";
-import {FontResource} from "../engine/loader/FontResource";
-import {ImageResource} from "../engine/loader/ImageResource";
 import {Engine} from "../engine/Engine";
-import {ProjectConfiguration} from "../../ProjectConfiguration";
+import {Window} from "../Window";
+import {Vec2} from "../../core/Vec2";
+import {MessageDataType} from "../../protocol/Message";
+import ServerConnectionData = MessageDataType.ServerConnectionData;
+import {MapLoader} from "../engine/map/MapLoader";
+import {ClientMap} from "../engine/map/ClientMap";
 
-const GAME_NAME = "PARAKEET";
-const UI_ELEMENT_WIDTH = 250;
-const ENTER_KEY_CODE = 13;
+const GAME_NAME_CENTER_OFFSET = -30;
+const PROGRESS_CENTER_OFFSET = 30;
+const PROGRESS_WIDTH = 200;
+const PROGRESS_HEIGHT = 20;
 
 export class LoadingScene implements IScene {
     private _context: CanvasRenderingContext2D;
     private _connector: Connector;
-    private _moveToGameSceneEvent = new EventDispatcher<null>();
-    private _connectionEstablishedEvent = new EventDispatcher<null>();
-    private _input: HTMLInputElement;
-    private _button: HTMLButtonElement;
+    private _clientReadyEvent = new EventDispatcher<{connectionData: ServerConnectionData, map: ClientMap}>();
     private _resourceLoader: ResourceLoader;
+    private _name: string;
+    private _progressPosition: Vec2;
 
-    constructor(context: CanvasRenderingContext2D, connector: Connector, resourceLoader: ResourceLoader) {
-        this._context = context;
+    constructor(name: string, window: Window, connector: Connector, resourceLoader: ResourceLoader) {
+        this._name = name;
+        this._context = window.context();
         this._connector = connector;
         this._resourceLoader = resourceLoader;
     }
 
-    moveToGameSceneEvent(): EventDispatcher<null> {
-        return this._moveToGameSceneEvent;
-    }
-
-    connectionEstablishedEvent(): EventDispatcher<null> {
-        return this._connectionEstablishedEvent;
+    clientReadyEvent(): EventDispatcher<{connectionData: ServerConnectionData, map: ClientMap}> {
+        return this._clientReadyEvent;
     }
 
     render() {
-        this._resourceLoader.load().then(() => {
-            this._renderWelcome();
+        const screenCenter = new Vec2(this._context.canvas.clientWidth / 2, this._context.canvas.clientHeight / 2);
+
+        this._context.font = "50px Permanent Marker";
+        const gameNameWidth = this._context.measureText(Engine.GAME_NAME).width;
+
+        this._progressPosition = new Vec2(screenCenter.x() - PROGRESS_WIDTH / 2, screenCenter.y() + PROGRESS_CENTER_OFFSET);
+
+        this._renderBackground();
+        this._renderLogo(new Vec2(screenCenter.x() - gameNameWidth / 2, screenCenter.y() + GAME_NAME_CENTER_OFFSET));
+        this._renderProgress(this._progressPosition);
+
+        this._setProgress(0.2);
+
+        this._connector.open();
+        this._connector.protocol().connectionOpenEvent().addListener(this._connectionOpenHandler.bind(this));
+    }
+
+    destroy() {}
+
+    private _connectionOpenHandler() {
+        this._setProgress(0.5);
+
+        const protocol = this._connector.protocol();
+        protocol.sendConnectionData({
+            name: name
+        });
+
+        protocol.connectionDataEvent().addListener((connectionData: ServerConnectionData) => {
+            this._setProgress(0.7);
+            const mapLoader = new MapLoader();
+            mapLoader.load(connectionData.map).then((map: ClientMap) => {
+                this._setProgress(1.0);
+                this._clientReadyEvent.dispatch({
+                    connectionData: connectionData,
+                    map: map
+                });
+            });
         });
     }
 
-    destroy() {
-    }
-
-    private _renderWelcome() {
-        this._renderLogo();
-        this._renderNameInput();
-    }
-
-    private _renderLogo() {
+    private _renderBackground() {
         const image = this._resourceLoader.getImage("mainmenu");
         this._context.drawImage(image, 0, 0, this._context.canvas.width, this._context.canvas.height);
-
-        this._context.font = "50px Permanent Marker";
-        const x = this._context.canvas.clientWidth / 2 - this._context.measureText(GAME_NAME).width / 2;
-        this._context.fillText(GAME_NAME,x,350);
     }
 
-    private _renderProgress() {
-        document.body.removeChild(this._input);
-        document.body.removeChild(this._button);
+    private _renderLogo(position: Vec2) {
+        this._context.fillText(Engine.GAME_NAME, position.x(), position.y());
+    }
 
-        const x = this._context.canvas.clientWidth / 2 - this._context.measureText(GAME_NAME).width / 2;
-        const progressWidth = this._context.measureText(GAME_NAME).width;
-
+    private _renderProgress(position: Vec2) {
         this._context.fillStyle = "#808080";
-        this._context.fillRect(x,450, progressWidth,20);
+        this._context.fillRect(position.x(), position.y(), PROGRESS_WIDTH, PROGRESS_HEIGHT);
     }
 
     private _setProgress(progress: number) {
-        const x = this._context.canvas.clientWidth / 2 - this._context.measureText(GAME_NAME).width / 2 + 2;
-        const progressWidth = (this._context.measureText(GAME_NAME).width - 4) * progress;
+        const progressWidth = PROGRESS_WIDTH * progress;
+
         this._context.fillStyle = "#357F40";
-        this._context.fillRect(x,452, progressWidth,16);
-    }
-
-    private _renderNameInput() {
-        const x = this._context.canvas.clientWidth / 2 - UI_ELEMENT_WIDTH / 2;
-
-        const input: HTMLInputElement = document.createElement("input");
-        this._input = input;
-        input.type = "text";
-        input.placeholder = "Ваше имя";
-        input.className = "nickname-input";
-        input.style.top = 450 + "px";
-        input.style.left = x + "px";
-        input.setAttribute("autofocus", "true");
-        input.addEventListener("keydown", (event) => {
-            this._input.style.border = "1px solid #666";
-            if (event.keyCode == ENTER_KEY_CODE) {
-                this._nameReceivedHandler(input.value);
-            }
-        });
-        document.body.appendChild(input);
-        input.focus();
-
-        const button: HTMLButtonElement = document.createElement("button");
-        this._button = button;
-        button.innerHTML = "Присоединиться";
-        button.style.top = 485 + "px";
-        button.style.left = x + "px";
-        document.body.appendChild(button);
-        button.addEventListener("click", () => {
-            this._nameReceivedHandler(input.value);
-        });
-
-        if (ProjectConfiguration.DEBUG_PLAYER_RANDOM_NAME_FLAG)
-        {
-            const debugName = Math.random().toString(36).substring(7);
-            this._nameReceivedHandler(debugName);
-        }
-    }
-
-    private _nameReceivedHandler(name: string) {
-        if (name == "")
-        {
-            this._input.style.border = "1px solid red";
-            return;
-        }
-
-        this._renderProgress();
-
-        this._connector.open();
-        this._connector.protocol().connectionOpenEvent().addListener(this._connectedHandler.bind(this, name));
-    }
-
-    private _connectedHandler(name: string) {
-        this._connectionEstablishedEvent.dispatch(null);
-        this._setProgress(0.5);
-        this._connector.protocol().sendConnectionData({
-            name: name
-        });
+        this._context.fillRect(this._progressPosition.x(),this._progressPosition.y(), progressWidth,PROGRESS_HEIGHT);
     }
 }

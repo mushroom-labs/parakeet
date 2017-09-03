@@ -11,4 +11,7 @@ const resourceLoader = new ResourceLoader();
 ClientResources.add(resourceLoader);
 
 const engine = new Engine(window, connector, resourceLoader);
-engine.run();
+
+resourceLoader.load().then(() => {
+    engine.run();
+});
