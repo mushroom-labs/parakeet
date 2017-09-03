@@ -1,4 +1,4 @@
-import {Vec2} from "./graphic/Vec2";
+import {Vec2} from "../../core/Vec2";
 
 export class Player {
     private _uid: string;

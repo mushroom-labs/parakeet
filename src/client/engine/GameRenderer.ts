@@ -3,6 +3,8 @@ import {Layer} from "./render/Layer";
 import {IRenderer} from "./render/IRenderer";
 import {Window} from "../Window";
 
+const VOID_COLOR = "#CCCCCC";
+
 export class GameRenderer {
     private _screenContext: CanvasRenderingContext2D;
     private _bufferContext: CanvasRenderingContext2D;
@@ -18,7 +20,8 @@ export class GameRenderer {
     }
 
     render() {
-        this._bufferContext.clearRect(0, 0, this._bufferContext.canvas.width, this._bufferContext.canvas.height);
+        this._bufferContext.fillStyle = VOID_COLOR;
+        this._bufferContext.fillRect(0, 0, this._bufferContext.canvas.width, this._bufferContext.canvas.height);
 
         for (const layer in Layer) {
             if (this._renderer[layer]) {

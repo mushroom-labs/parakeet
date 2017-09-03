@@ -7,7 +7,7 @@ import {KeyboardController} from "../engine/controller/KeyboardController";
 import {MouseController} from "../engine/controller/MouseController";
 import {Window} from "../Window";
 import {Player} from "../engine/Player";
-import {Vec2} from "../engine/graphic/Vec2";
+import {Vec2} from "../../core/Vec2";
 import {GameStorage} from "../engine/GameStorage";
 import {ResourceLoader} from "../engine/loader/ResourceLoader";
 import {ClientMap} from "../engine/map/ClientMap";
@@ -18,6 +18,7 @@ import {MapRenderer} from "../engine/render/MapRenderer";
 import {PlayerRenderer} from "../engine/render/PlayerRenderer";
 import {PhysicsDebugRenderer} from "../engine/render/PhysicsDebugRenderer";
 import {ClientDebugRenderer} from "../engine/render/ClientDebugRenderer";
+import {Camera} from "../engine/render/Camera";
 
 export class GameScene implements IScene {
     private _keyboardController: KeyboardController;
@@ -25,15 +26,17 @@ export class GameScene implements IScene {
     private _resourceLoader: ResourceLoader;
     private _renderer: GameRenderer;
     private _storage: GameStorage;
+    private _camera: Camera;
 
     constructor(connectionData: ServerConnectionData, transport: IClientMessageTransport, window: Window, resourceLoader: ResourceLoader, map: ClientMap) {
         this._keyboardController = new KeyboardController(window.container());
         this._mouseController = new MouseController(window.container());
         this._resourceLoader = resourceLoader;
         this._storage = this._createStorage(connectionData);
+        this._camera = new Camera(window.viewport());
 
         this._renderer = new GameRenderer(window);
-        this._addRenderers(transport, map);
+        this._addRenderers(transport, map, window);
 
         this._addInputControllerListeners(transport);
         this._addTransportListeners(transport);
@@ -47,11 +50,11 @@ export class GameScene implements IScene {
 
     }
 
-    private _addRenderers(transport: IClientMessageTransport, map: ClientMap) {
+    private _addRenderers(transport: IClientMessageTransport, map: ClientMap, window: Window) {
         const playerImage = this._resourceLoader.getImage("move_rifle_0");
 
-        this._renderer.setRenderer(Layer.MAP, new MapRenderer(map));
-        this._renderer.setRenderer(Layer.PLAYERS, new PlayerRenderer(this._storage, playerImage));
+        this._renderer.setRenderer(Layer.MAP, new MapRenderer(map, this._camera, window.viewport()));
+        this._renderer.setRenderer(Layer.PLAYERS, new PlayerRenderer(this._storage, this._camera, playerImage));
 
         if (ProjectConfiguration.DEBUG_PHYSICS_DRAW_FLAG) {
             this._renderer.setRenderer(Layer.PHYSICS_DEBUG, new PhysicsDebugRenderer(transport));
@@ -83,11 +86,12 @@ export class GameScene implements IScene {
             });
         });
 
-        this._mouseController.mouseActionEvent().addListener((data) => {
+        this._mouseController.mouseActionEvent().addListener((data: Vec2) => {
             this._storage.activePlayer().setMousePosition(data);
+            const anchorPoint = this._camera.anchorPoint();
             transport.sendMouseAction({
-                x: data.x(),
-                y: data.y(),
+                x: data.x() + anchorPoint.x(),
+                y: data.y() + anchorPoint.y(),
             });
         });
     }
@@ -103,8 +107,11 @@ export class GameScene implements IScene {
         });
 
         transport.liveUpdateDataEvent().addListener((data: LiveUpdateData) => {
-            this._storage.activePlayer().setPosition(new Vec2(data.player.x, data.player.y));
+            const position = new Vec2(data.player.x, data.player.y);
+            this._storage.activePlayer().setPosition(position);
             this._storage.activePlayer().setAngle(data.player.angle);
+            this._camera.setPosition(position);
+
             for (const actorUid in data.actors)
             {
                 const actorInfo = data.actors[actorUid];

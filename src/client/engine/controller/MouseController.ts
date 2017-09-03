@@ -1,6 +1,6 @@
 
 import {EventDispatcher} from "../../../EventDispatcher";
-import {Vec2} from "../graphic/Vec2";
+import {Vec2} from "../../../core/Vec2";
 
 export class MouseController {
     private _mouseActionEvent = new EventDispatcher<Vec2>();
