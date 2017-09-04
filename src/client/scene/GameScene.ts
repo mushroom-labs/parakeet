@@ -55,7 +55,7 @@ export class GameScene implements IScene {
         this._renderer.setRenderer(Layer.PLAYERS, new PlayerRenderer(this._storage, this._camera, playerImage));
 
         if (ProjectConfiguration.DEBUG_PHYSICS_DRAW_FLAG) {
-            this._renderer.setRenderer(Layer.PHYSICS_DEBUG, new PhysicsDebugRenderer(transport));
+            this._renderer.setRenderer(Layer.PHYSICS_DEBUG, new PhysicsDebugRenderer(this._camera, transport));
         }
 
         if (ProjectConfiguration.DEBUG_CLIENT_DRAW_FLAG) {
