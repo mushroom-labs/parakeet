@@ -11,6 +11,7 @@ import MouseActionData = MessageDataType.MouseActionData;
 import ActorConnectionData = MessageDataType.ActorConnectionData;
 import ActorDisconnectionData = MessageDataType.ActorDisconnectionData;
 import DebugDrawData = MessageDataType.DebugDrawData;
+import MouseMoveActionData = MessageDataType.MouseMoveActionData;
 
 export interface IMessageTransport {
     sendLogInfoMessage(data: LogInfoData);
@@ -30,6 +31,7 @@ export interface IClientMessageTransport  extends IMessageTransport {
     debugDrawDataEvent(): EventDispatcher<DebugDrawData>;
     sendConnectionData(data: ClientConnectionData);
     sendMoveAction(data: MoveActionData);
+    sendMoveMouseAction(data: MouseMoveActionData);
     sendMouseAction(data: MouseActionData);
     close();
 }
@@ -48,6 +50,7 @@ export interface IServerClientMessageTransport  extends IMessageTransport {
     connectionCloseEvent(): EventDispatcher<null>;
     connectionDataEvent(): EventDispatcher<ClientConnectionData>;
     moveActionDataEvent(): EventDispatcher<MoveActionData>;
+    mouseMoveActionDataEvent(): EventDispatcher<MouseMoveActionData>;
     mouseActionDataEvent(): EventDispatcher<MouseActionData>;
     close();
 }

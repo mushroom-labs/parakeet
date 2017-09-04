@@ -10,6 +10,7 @@ import MouseActionData = MessageDataType.MouseActionData;
 import ActorDisconnectionData = MessageDataType.ActorDisconnectionData;
 import ActorConnectionData = MessageDataType.ActorConnectionData;
 import DebugDrawData = MessageDataType.DebugDrawData;
+import MouseMoveActionData = MessageDataType.MouseMoveActionData;
 
 export class ClientSocketTransport extends AbstractMessageTransport implements IClientMessageTransport {
     private _connectionOpenEvent = new EventDispatcher<null>();
@@ -76,6 +77,10 @@ export class ClientSocketTransport extends AbstractMessageTransport implements I
 
     sendMoveAction(data: MoveActionData) {
         this._sendMessage(this._createMessage(MessageType.MOVE_ACTION_DATA, data));
+    }
+
+    sendMoveMouseAction(data: MouseMoveActionData) {
+        this._sendMessage(this._createMessage(MessageType.MOUSE_MOVE_ACTION_DATA, data));
     }
 
     sendMouseAction(data: MouseActionData) {

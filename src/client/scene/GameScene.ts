@@ -84,12 +84,19 @@ export class GameScene implements IScene {
             });
         });
 
-        this._mouseController.mouseActionEvent().addListener((data: Vec2) => {
+        this._mouseController.mouseMoveActionEvent().addListener((data: Vec2) => {
             this._storage.activePlayer().setMousePosition(data);
             const anchorPoint = this._camera.anchorPoint();
-            transport.sendMouseAction({
+            transport.sendMoveMouseAction({
                 x: data.x() + anchorPoint.x(),
                 y: data.y() + anchorPoint.y(),
+            });
+        });
+
+        this._mouseController.mouseActionEvent().addListener((data) => {
+            transport.sendMouseAction({
+                button: data.button,
+                isPressed: data.isPressed,
             });
         });
     }

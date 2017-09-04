@@ -1,4 +1,5 @@
 import {MoveDirection} from "../client/engine/MoveDirection";
+import {MouseButton} from "../client/engine/controller/MouseButton";
 
 export enum MessageType {
     // Common
@@ -17,6 +18,7 @@ export enum MessageType {
     CLIENT_CONNECTION_DATA,
     MOVE_ACTION_DATA,
     MOUSE_ACTION_DATA,
+    MOUSE_MOVE_ACTION_DATA,
 }
 
 export type Message = {
@@ -60,9 +62,13 @@ export namespace MessageDataType {
         direction: MoveDirection,
         isPressed: boolean,
     };
-    export type MouseActionData = {
+    export type MouseMoveActionData = {
         x: number,
         y: number,
+    };
+    export type MouseActionData = {
+        button: MouseButton,
+        isPressed: boolean,
     };
     export type LiveUpdateData = {
         deltaTime: number;

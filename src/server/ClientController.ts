@@ -11,6 +11,7 @@ import {EventDispatcher} from "../EventDispatcher";
 import ActorConnectionData = MessageDataType.ActorConnectionData;
 import PlayerConnectionData = MessageDataType.PlayerConnectionData;
 import DebugDrawData = MessageDataType.DebugDrawData;
+import MouseMoveActionData = MessageDataType.MouseMoveActionData;
 
 export class ClientController {
     private _connectionCloseEvent = new EventDispatcher<null>();
@@ -62,7 +63,7 @@ export class ClientController {
                 }
             });
 
-            this._messageTransport.mouseActionDataEvent().addListener((data) => {
+            this._messageTransport.mouseMoveActionDataEvent().addListener((data: MouseMoveActionData) => {
                 this._actor.setViewPoint(data.x, data.y);
             });
         });

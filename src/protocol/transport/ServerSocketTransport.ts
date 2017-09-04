@@ -11,6 +11,7 @@ import MouseActionData = MessageDataType.MouseActionData;
 import PlayerConnectionData = MessageDataType.PlayerConnectionData;
 import PlayerDisconnectedData = MessageDataType.ActorDisconnectionData;
 import DebugDrawData = MessageDataType.DebugDrawData;
+import MouseMoveActionData = MessageDataType.MouseMoveActionData;
 
 export class ServerSocketTransport extends AbstractMessageTransport implements IServerMessageTransport {
     private _clientConnectionOpenEvent = new EventDispatcher<IServerClientMessageTransport>();
@@ -49,6 +50,7 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
     private _connectionCloseEvent = new EventDispatcher<null>();
     private _connectionDataEvent = new EventDispatcher<ClientConnectionData>();
     private _moveActionDataEvent = new EventDispatcher<MoveActionData>();
+    private _mouseMoveActionDataEvent = new EventDispatcher<MouseMoveActionData>();
     private _mouseActionDataEvent = new EventDispatcher<MouseActionData>();
 
     constructor(socket: WebSocket) {
@@ -74,6 +76,10 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
 
     moveActionDataEvent(): EventDispatcher<MoveActionData> {
         return this._moveActionDataEvent;
+    }
+
+    mouseMoveActionDataEvent(): EventDispatcher<MouseMoveActionData> {
+        return this._mouseMoveActionDataEvent;
     }
 
     mouseActionDataEvent(): EventDispatcher<MouseActionData> {
@@ -111,6 +117,9 @@ class ServerClientSocketTransport extends AbstractMessageTransport implements IS
                 break;
             case MessageType.MOVE_ACTION_DATA:
                 this._moveActionDataEvent.dispatch(message.data as MoveActionData);
+                break;
+            case MessageType.MOUSE_MOVE_ACTION_DATA:
+                this._mouseMoveActionDataEvent.dispatch(message.data as MouseMoveActionData);
                 break;
             case MessageType.MOUSE_ACTION_DATA:
                 this._mouseActionDataEvent.dispatch(message.data as MouseActionData);
