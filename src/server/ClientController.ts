@@ -78,10 +78,15 @@ export class ClientController {
 
     sendLiveUpdateData(deltaTime: number) {
         const position = this._actor.position();
+        const crossPoint = this._actor.getCrossPoint();
         const playerData = {
             x: position.x,
             y: position.y,
             angle: this._actor.angle(),
+            crossPoint: {
+                x: crossPoint.x,
+                y: crossPoint.y,
+            }
         };
 
         const actorsData = {};

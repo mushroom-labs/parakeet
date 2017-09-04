@@ -27,6 +27,10 @@ export class PlayerRenderer implements IRenderer {
         context.save();
 
         const offset = this._camera.offset();
+        context.fillStyle = "#ff0000";
+        const crossPoint = player.crossPosition().sub(this._camera.anchorPoint());
+        context.fillRect(crossPoint.x() - 1, crossPoint.y() - 1, 2, 2);
+
         context.translate(offset.x(), offset.y());
         context.rotate(player.angel());
 

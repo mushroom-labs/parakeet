@@ -54,6 +54,10 @@ export namespace MessageDataType {
         angle: number,
     }
     export type PlayerData = ActorData & {
+        crossPoint: {
+            x: number,
+            y: number,
+        }
         //TODO: addition player data
     }
     export type MoveActionData = {
@@ -66,7 +70,7 @@ export namespace MessageDataType {
     };
     export type LiveUpdateData = {
         deltaTime: number;
-        player: ActorData,
+        player: PlayerData,
         actors: { [uid: string]: ActorData };
     }
     export type TileSetData = {

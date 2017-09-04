@@ -4,6 +4,7 @@ export class Player {
     private _uid: string;
     private _position: Vec2;
     private _mousePosition: Vec2;
+    private _crossPosition: Vec2;
     private _angle: number;
     private _width: number;
     private _height: number;
@@ -39,6 +40,10 @@ export class Player {
         return this._angle;
     }
 
+    crossPosition(): Vec2 {
+        return this._crossPosition;
+    }
+
     setPosition(position: Vec2) {
         this._position = position;
     }
@@ -49,5 +54,9 @@ export class Player {
 
     setMousePosition(mousePosition: Vec2) {
         this._mousePosition = mousePosition;
+    }
+
+    setCrossPosition(position: Vec2) {
+        this._crossPosition = position;
     }
 }

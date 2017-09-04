@@ -52,11 +52,23 @@ export class Actor extends AbstractBody implements IActor {
         while ( diffAngle < -Math.PI ) diffAngle += Math.PI * 2;
         while ( diffAngle >  Math.PI ) diffAngle -= Math.PI * 2;
 
-        this.setAngularVelocity(diffAngle * 0.001 * deltaTime);
+        this.setAngularVelocity(diffAngle * 0.0005 * deltaTime);
     }
 
     setViewPoint(x: number, y: number): void {
         this._viewPoint = new Box2D.Common.Math.b2Vec2(x, y);
+    }
+
+    getCrossPoint(): Box2D.Common.Math.b2Vec2 {
+        const viewPointRangeVec  = this._viewPoint.Copy();
+        viewPointRangeVec.Subtract(this.position());
+        const viewPointRange = viewPointRangeVec.Length();
+
+        const crossPointVec = new Box2D.Common.Math.b2Vec2(Math.cos(this.angle()), Math.sin(this.angle()));
+        crossPointVec.Multiply(viewPointRange);
+        crossPointVec.Add(this.position());
+
+        return crossPointVec;
     }
 
     static create(b2World: Box2D.Dynamics.b2World, uid: string): Actor {
