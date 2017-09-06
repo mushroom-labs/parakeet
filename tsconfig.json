@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "isolatedModules": true,
         "module": "commonjs",
         "target": "ES6",
         "rootDir": "./src",
@@ -10,5 +11,9 @@
             "DOM.Iterable",
             "ScriptHost"
         ]
-    }
+    },
+    "files": [
+        "./src/main_server.ts",
+        "./src/main_client.ts"
+    ]
 }
