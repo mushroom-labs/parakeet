@@ -37,6 +37,7 @@ export namespace MessageDataType {
         height: number,
     }
     export type PlayerConnectionData = ActorConnectionData & {
+        maxHealth: number,
         //TODO: addition player connection data
     }
     export type ServerConnectionData = {
@@ -56,6 +57,7 @@ export namespace MessageDataType {
         angle: number,
     }
     export type PlayerData = ActorData & {
+        health: number,
         //TODO: addition player data
     }
     export type MoveActionData = {
@@ -72,7 +74,7 @@ export namespace MessageDataType {
     };
     export type LiveUpdateData = {
         deltaTime: number;
-        player: ActorData,
+        player: PlayerData,
         actors: { [uid: string]: ActorData };
     }
     export type TileSetData = {

@@ -2,13 +2,13 @@
   "name": "parakeet",
   "version": "0.0.1",
   "scripts": {
-    "build:server": "tsc --project ./tsconfig.server.json",
-    "build:client:tsc": "tsc --project ./tsconfig.client.json",
-    "build:client:bundle": "browserify ./bin/build/main_client.js -o ./bin/client/build/bundle.js",
-    "build:client": "npm run-script build:client:tsc && npm run-script build:client:bundle",
-    "build": "npm run-script build:server && npm run-script build:client",
-    "start": "cd bin/build && node main_server.js",
-    "live:client": "nodemon --delay 3 --exec \"tsc --project ./tsconfig.client.json\""
+    "_build:compile": "tsc --project ./tsconfig.json",
+    "_build:bundle": "browserify ./bin/build/main_client.js -o ./bin/client/build/bundle.js",
+    "build": "npm run-script _build:compile && npm run-script _build:bundle",
+    "_watch:compile": "tsc --watch --project ./tsconfig.json",
+    "_watch:bundle": "watchify ./bin/build/main_client.js -o ./bin/client/build/bundle.js -v -d",
+    "watch": "parallel _watch:bundle _watch:compile",
+    "start": "cd bin/build && node main_server.js"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,8 @@
     "ws": "^3.1.0"
   },
   "devDependencies": {
-    "nodemon": "^1.11.0",
-    "ts-node": "^3.3.0"
+    "npm-runtools": "^1.0.1",
+    "ts-node": "^3.3.0",
+    "watchify": "^3.9.0"
   }
 }

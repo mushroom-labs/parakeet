@@ -83,6 +83,7 @@ export class ClientController {
             x: position.x,
             y: position.y,
             angle: this._actor.angle(),
+            health: 42, //TODO: real health
         };
 
         const actorsData = {};
@@ -119,7 +120,10 @@ export class ClientController {
     }
 
     getPlayerConnectionData(): PlayerConnectionData {
-        return this._createConnectionData(this._actor);
+        const playerActorData = this._createConnectionData(this._actor);
+        return Object.assign(playerActorData, {
+            maxHealth: 100, //TODO: const
+        });
     }
 
     update() {
