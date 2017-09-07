@@ -56,7 +56,7 @@ export class Engine {
     }
 
     private _runGameScene(connectionData: ServerConnectionData, map: ClientMap) {
-        const gameScene = new GameScene(connectionData, this._connector.protocol(), this._window, this._resourceLoader, map);
+        const gameScene = new GameScene(connectionData, this._connector.transport(), this._window, this._resourceLoader, map);
 
         this._changeScene(gameScene);
     }

@@ -35,5 +35,6 @@
     "npm-runtools": "^1.0.1",
     "ts-node": "^3.3.0",
     "watchify": "^3.9.0"
-  }
+  },
+  "false": {}
 }

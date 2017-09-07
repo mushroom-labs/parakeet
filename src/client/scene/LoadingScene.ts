@@ -49,7 +49,7 @@ export class LoadingScene implements IScene {
         this._setProgress(0.2);
 
         this._connector.open();
-        this._connector.protocol().connectionOpenEvent().addListener(this._connectionOpenHandler.bind(this));
+        this._connector.transport().connectionOpenEvent().addListener(this._connectionOpenHandler.bind(this));
     }
 
     destroy() {}
@@ -57,12 +57,12 @@ export class LoadingScene implements IScene {
     private _connectionOpenHandler() {
         this._setProgress(0.5);
 
-        const protocol = this._connector.protocol();
-        protocol.sendConnectionData({
+        const transport = this._connector.transport();
+        transport.sendConnectionData({
             name: name
         });
 
-        protocol.connectionDataEvent().addListener((connectionData: ServerConnectionData) => {
+        transport.connectionDataEvent().addListener((connectionData: ServerConnectionData) => {
             this._setProgress(0.7);
             const mapLoader = new MapLoader();
             mapLoader.load(connectionData.map).then((map: ClientMap) => {

@@ -42,8 +42,12 @@ export class MapRenderer implements IRenderer {
     }
 
     private _createMapCanvas(): HTMLCanvasElement {
-        const mapWidth = this._map.width() * this._map.tileWidth();
-        const mapHeight = this._map.height() * this._map.tileHeight();
+        const layerSize = this._map.layerSize();
+        const cellSize = this._map.cellSize();
+        const tileSize = this._map.tileSize();
+
+        const mapWidth = layerSize.width() * cellSize.width();
+        const mapHeight = layerSize.height() * cellSize.height();
 
         const canvas = document.createElement("canvas");
         canvas.width = mapWidth;
@@ -52,16 +56,16 @@ export class MapRenderer implements IRenderer {
         const context = canvas.getContext("2d", { alpha: false });
         const grid = this._map.grid(),
             gridLength = grid.length,
-            tileWidth = this._map.tileWidth(),
-            tileHeight = this._map.tileHeight();
+            tileWidth = tileSize.width(),
+            tileHeight = tileSize.height();
 
         for (let i = 0; i < gridLength; ++i) {
-            const x = (i % this._map.width()) * tileWidth;
-            const y = Math.floor(i / this._map.width()) * tileHeight;
+            const x = (i % layerSize.width()) * cellSize.width();
+            const y = Math.floor(i / layerSize.height()) * cellSize.height();
 
             const tileId = grid[i] - 1;
 
-            context.drawImage(this._map.image(), tileId * tileWidth, 0, tileHeight, tileHeight, x, y, tileWidth, tileHeight);
+            context.drawImage(this._map.image(), tileId * tileWidth, 0, tileHeight, tileHeight, x, y, cellSize.width(), cellSize.height());
         }
 
         return canvas;

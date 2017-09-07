@@ -1,18 +1,16 @@
 import {Vec2} from "../../core/Vec2";
+import {Size} from "../../core/Size";
 
 export class Player {
     private _uid: string;
     private _position: Vec2;
     private _mousePosition: Vec2;
     private _angle: number;
-    private _width: number;
-    private _height: number;
+    private _size: Size;
 
     constructor(uid, width, height) {
         this._uid = uid;
-        this._position = new Vec2(20, 20);
-        this._width = width;
-        this._height = height;
+        this._size = new Size(width, height);
     }
 
     uid(): string {
@@ -23,12 +21,8 @@ export class Player {
         return this._position;
     }
 
-    width(): number {
-        return this._width;
-    }
-
-    height(): number {
-        return this._height;
+    size(): Size {
+        return this._size;
     }
 
     mousePosition(): Vec2 {

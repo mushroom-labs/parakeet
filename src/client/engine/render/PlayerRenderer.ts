@@ -30,10 +30,9 @@ export class PlayerRenderer implements IRenderer {
         context.translate(offset.x(), offset.y());
         context.rotate(player.angel());
 
-        const spriteWidth = 48;
-        const spriteHeight = 32;
+        const size = player.size();
 
-        context.drawImage(this._image, -16, -17, spriteWidth, spriteHeight);
+        context.drawImage(this._image, -size.width() / 2, - size.height() / 2, size.width(), size.height());
 
         context.restore();
     }
@@ -50,10 +49,9 @@ export class PlayerRenderer implements IRenderer {
         context.translate(x, y);
         context.rotate(player.angel());
 
-        const spriteWidth = 48;
-        const spriteHeight = 32;
+        const size = player.size();
 
-        context.drawImage(this._image, -16, -17, spriteWidth, spriteHeight);
+        context.drawImage(this._image, -size.width() / 2, - size.height() / 2, size.width(), size.height());
 
         context.restore();
     }
