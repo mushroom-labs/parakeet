@@ -17,6 +17,14 @@ export abstract class AbstractBody {
         this._b2Body.SetUserData(bodyData);
     }
 
+    isActive(): boolean {
+        return this._b2Body.IsActive();
+    }
+
+    deactivate() {
+        this._b2Body.SetActive(false);
+    }
+
     b2Body(): Box2D.Dynamics.b2Body {
         return this._b2Body;
     }

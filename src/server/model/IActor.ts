@@ -1,11 +1,12 @@
 import * as Box2D from "../../../lib/box2dweb";
 
 export interface IActor {
-
     uid();
 
     name(): string;
     setName(name: string);
+
+    health(): number;
 
     position(): Box2D.Common.Math.b2Vec2;
     angle(): number;
@@ -18,6 +19,7 @@ export interface IActor {
     setAngularVelocity(velocity: number);
     processRotation(deltaTime: number);
 
-    setViewPoint(x: number, y: number): void;
+    setViewPoint(x: number, y: number);
 
+    processHitByBullet();
 }

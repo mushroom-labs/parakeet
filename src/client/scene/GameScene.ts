@@ -108,6 +108,7 @@ export class GameScene implements IScene {
             const position = new Vec2(data.player.x, data.player.y);
             this._storage.activePlayer().setPosition(position);
             this._storage.activePlayer().setAngle(data.player.angle);
+            this._storage.activePlayer().setHealth(data.player.health);
             this._camera.setPosition(position);
 
             for (const actorUid in data.actors)

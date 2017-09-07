@@ -7,6 +7,7 @@ export class Player {
     private _angle: number;
     private _width: number;
     private _height: number;
+    private _health: number;
 
     constructor(uid, width, height) {
         this._uid = uid;
@@ -39,6 +40,10 @@ export class Player {
         return this._angle;
     }
 
+    health(): number {
+        return this._health;
+    }
+
     setPosition(position: Vec2) {
         this._position = position;
     }
@@ -49,5 +54,9 @@ export class Player {
 
     setMousePosition(mousePosition: Vec2) {
         this._mousePosition = mousePosition;
+    }
+
+    setHealth(health: number) {
+        this._health = health;
     }
 }

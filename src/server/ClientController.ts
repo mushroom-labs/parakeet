@@ -11,6 +11,8 @@ import {EventDispatcher} from "../EventDispatcher";
 import ActorConnectionData = MessageDataType.ActorConnectionData;
 import PlayerConnectionData = MessageDataType.PlayerConnectionData;
 import DebugDrawData = MessageDataType.DebugDrawData;
+import {Bullet} from "./model/Bullet";
+import {Actor} from "./model/Actor";
 
 export class ClientController {
     private _connectionCloseEvent = new EventDispatcher<null>();
@@ -82,7 +84,7 @@ export class ClientController {
             x: position.x,
             y: position.y,
             angle: this._actor.angle(),
-            health: 42, //TODO: real health
+            health: this._actor.health(),
         };
 
         const actorsData = {};
@@ -97,11 +99,23 @@ export class ClientController {
             }
         });
 
+        const bulletsData = {};
+        this._world.bullets().forEach((bullet: Bullet, uid: string) => {
+            const position = bullet.position();
+            const size = bullet.size();
+            bulletsData[uid] = {
+                x: position.x,
+                y: position.y,
+                width: size.x,
+                height: size.y,
+            }
+        });
+
         this._messageTransport.sendLiveUpdateData({
             deltaTime: deltaTime,
             player: playerData,
             actors: actorsData,
-        })
+        });
     }
 
     sendDebugDrawData(data: DebugDrawData) {
@@ -121,7 +135,7 @@ export class ClientController {
     getPlayerConnectionData(): PlayerConnectionData {
         const playerActorData = this._createConnectionData(this._actor);
         return Object.assign(playerActorData, {
-            maxHealth: 100, //TODO: const
+            maxHealth: Actor.MAX_HEALTH,
         });
     }
 

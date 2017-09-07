@@ -22,6 +22,9 @@ export class ClientDebugRenderer implements IRenderer {
     private _drawDebugSightDirection(context: CanvasRenderingContext2D, player: Player) {
         context.save();
 
+        context.strokeStyle = "black";
+        context.strokeText(`HP: ${player.health()}`, player.position().x() - 20, player.position().y() - 20);
+
         context.strokeStyle = "red";
         context.lineWidth = 1;
         context.beginPath();

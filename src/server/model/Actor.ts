@@ -7,10 +7,14 @@ import {CollisionFilterType} from "./CollisionFilterType";
 export class Actor extends AbstractBody implements IActor {
     private _name: string;
     private _viewPoint: Box2D.Common.Math.b2Vec2;
+    private _health: number;
+
+    public static readonly MAX_HEALTH = 100;
 
     constructor(uid: string, b2Body: Box2D.Dynamics.b2Body) {
         super(BodyType.ACTOR, uid, b2Body);
         this._viewPoint = this.position().Copy();
+        this._health = Actor.MAX_HEALTH;
     }
 
     setName(name: string) {
@@ -19,6 +23,10 @@ export class Actor extends AbstractBody implements IActor {
 
     name(): string {
         return this._name;
+    }
+
+    health(): number {
+        return this._health;
     }
 
     viewDirection(): Box2D.Common.Math.b2Vec2 {
@@ -55,8 +63,12 @@ export class Actor extends AbstractBody implements IActor {
         this.setAngularVelocity(diffAngle * 0.001 * deltaTime);
     }
 
-    setViewPoint(x: number, y: number): void {
+    setViewPoint(x: number, y: number) {
         this._viewPoint = new Box2D.Common.Math.b2Vec2(x, y);
+    }
+
+    processHitByBullet() {
+        this._health = Math.max(0, this._health - 10);
     }
 
     static create(b2World: Box2D.Dynamics.b2World, uid: string): Actor {
