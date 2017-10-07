@@ -6,7 +6,7 @@ import LayerData = MessageDataType.LayerData;
 import * as FileLoaderUtils from "../../../fileLoaderUtils"
 import * as path from "path";
 
-const CELL_SIZE = 32; //meters
+const CELL_SIZE = 20; //meters
 
 type ObjectNodeData = {
     x: number,

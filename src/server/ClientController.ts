@@ -127,7 +127,7 @@ export class ClientController {
     }
 
     update() {
-        const MOVE_IMPULSE = 10;
+        const MOVE_IMPULSE = 1.8;
         let xImpulse = 0;
         xImpulse = this._actionController.moveRight ? 1 : xImpulse;
         xImpulse = this._actionController.moveLeft ? -1 : xImpulse;

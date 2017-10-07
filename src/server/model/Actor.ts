@@ -72,7 +72,7 @@ export class Actor extends AbstractBody implements IActor {
         const b2Body = b2World.CreateBody(b2BodyDef);
 
         const b2Shape = new Box2D.Collision.Shapes.b2PolygonShape();
-        b2Shape.SetAsBox(10, 10);
+        b2Shape.SetAsBox(6, 6);
 
         const b2FixtureDef = new Box2D.Dynamics.b2FixtureDef();
         b2FixtureDef.shape = b2Shape;

@@ -4,6 +4,8 @@ import {GameStorage} from "../GameStorage";
 import {Player} from "../Player";
 import {Camera} from "./Camera";
 
+const SIZE_SPRITE_INCREASE = 7;
+
 export class PlayerRenderer implements IRenderer {
     private _storage: GameStorage;
     private _image: HTMLImageElement;
@@ -31,8 +33,10 @@ export class PlayerRenderer implements IRenderer {
         context.rotate(player.angel());
 
         const size = player.size();
+        const width = size.width() + SIZE_SPRITE_INCREASE;
+        const height = size.height() + SIZE_SPRITE_INCREASE;
 
-        context.drawImage(this._image, -size.width() / 2, - size.height() / 2, size.width(), size.height());
+        context.drawImage(this._image, -width / 2, -height / 2, width, height);
 
         context.restore();
     }
@@ -51,7 +55,10 @@ export class PlayerRenderer implements IRenderer {
 
         const size = player.size();
 
-        context.drawImage(this._image, -size.width() / 2, - size.height() / 2, size.width(), size.height());
+        const width = size.width() + SIZE_SPRITE_INCREASE;
+        const height = size.height() + SIZE_SPRITE_INCREASE;
+
+        context.drawImage(this._image, -width / 2, -height / 2, width, height);
 
         context.restore();
     }
